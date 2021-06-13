@@ -75,11 +75,11 @@ You can use `loop = false` at any time to stop it.
 
 Delete the `amount` messages from user (`userId`) sent to a channel/DM (`channelId`) appearing before message (`beforeMessageId`) and wait `delayMs` milliseconds everytime.
 
-Discord recently made its rate limiting strictier. I recommend 1100ms as a minimum to not get rate limited. Make it even bigger if you are affraid of getting banned.
-
 I use sometimes to fully clear my DMs as Discord does not offer it as a feature.
 
 You can use `loop = false` at any time to stop it.
+
+Discord recently made its rate limiting strictier. I recommend 1100ms as a minimum to not get rate limited. Make it even bigger if you are affraid of getting banned.
 
 (You can use https://github.com/rigwild/discord-purge-messages too!)
 
@@ -135,7 +135,9 @@ You can use `loop = false` at any time to stop it.
 
 # API
 
-### `delay(ms: number) => Promise`
+## `delay(ms)`
+
+`delay(ms: number) => Promise<void>`
 
 Wait for `ms` milliseconds.
 
@@ -143,7 +145,9 @@ Wait for `ms` milliseconds.
 await delay(1500)
 ```
 
-### `api.getMessages(channelId: string) => Promise<Message[]>`
+## `api.getMessages(channelId)`
+
+`api.getMessages(channelId: string) => Promise<Message[]>`
 
 Get the last 100 messages from a channel (`channelId`).
 
@@ -160,7 +164,9 @@ await api.getMessages('826934811846377545')
 }
 ```
 
-### `api.sendMessage(channelId: string, message: string, tts = false) => Promise<Message>`
+## `api.sendMessage(channelId, message, tts)`
+
+`api.sendMessage(channelId: string, message: string, tts = false) => Promise<Message>`
 
 Send a `message` to a channel (`channelId`) with Text To Speach (`tts`, off by default).
 
@@ -178,7 +184,9 @@ await api.sendMessage('826934811846377545', 'Hello!', true)
 }
 ```
 
-### `api.editMessage(channelId: string, messageId: string, newMessage: string) => Promise<Message>`
+## `api.editMessage(channelId, messageId, newMessage)`
+
+`api.editMessage(channelId: string, messageId: string, newMessage: string) => Promise<Message>`
 
 Edit a message (`messageId`) from a channel (`channelId`) and replace its content with `newMessage`.
 
@@ -195,7 +203,9 @@ await api.editMessage('826934811846377545', '853663267628122122', 'Hello! You go
 }
 ```
 
-### `api.deleteMessage(channelId: string, messageId) => Promise<Message>`
+## `api.deleteMessage(channelId, messageId)`
+
+`api.deleteMessage(channelId: string, messageId: string) => Promise<Message>`
 
 Delete a message (`messageId`) from a channel (`channelId`).
 
@@ -212,9 +222,11 @@ await api.deleteMessage('826934811846377545', '853663267628122122')
 }
 ```
 
-### `api.apiCall(apiPath: string, body: any, method = 'GET') => Promise<Message>`
+## `api.apiCall(apiPath, body, method)`
 
-Raw API call.
+`api.apiCall(apiPath: string, body: any, method = 'GET') => Promise<Message>`
+
+Do a raw API call.
 
 ```js
 await api.apiCall(`/channels/${channelId}/messages`, { content: message }, 'POST')
