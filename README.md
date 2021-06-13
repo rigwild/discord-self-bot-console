@@ -18,9 +18,7 @@ Automating user accounts is against [Discord's Terms of Service](https://discord
 
 You can now use any function one by one as you like directly in the console `await api.someFunction()`. Don't forget `await` or the server's response will not be printed to the console.
 
-```js
-await api.sendMessage('channel_id', 'Hello!')
-```
+Use the `id()` function to update the variable `gid` guild id and `cid` channel id to what you are currently watching.
 
 **Note:** It's a good idea to wrap your code in its own scope `{ code }` or you might get an error when reusing the same variable names later!
 
@@ -28,11 +26,12 @@ await api.sendMessage('channel_id', 'Hello!')
 
 ## Basic example
 
-Get the last 100 messages of a channel, send a message to it, edit it then delete it.
+Update `cid` to the channel you are watching, get the last 100 messages, send a message, edit then delete.
 
 ```js
 {
-  let channelId = '826934811846377545'
+  id()
+  let channelId = cid
 
   // Send a message
   let sentMessage = await api.sendMessage(channelId, 'Hello!')
@@ -57,7 +56,8 @@ You can use `loop = false` at any time to stop it.
 
 ```js
 {
-  let channelId = '826934811846377545'
+  id()
+  let channelId = cid
   let message = 'Hi, I like spamming 🦜'
 
   var loop = true
@@ -85,7 +85,8 @@ Discord recently made its rate limiting strictier. I recommend 1100ms as a minim
 
 ```js
 {
-  let channelId = '826934811846377545'
+  id()
+  let channelId = cid
   let userId = '012345678987654321'
   let amount = 99999999
   let delayMs = 1100
@@ -135,6 +136,41 @@ Discord recently made its rate limiting strictier. I recommend 1100ms as a minim
 
 # API
 
+## Full list
+
+Here is the full list of available functions, check [`index.js`](./index.js).
+
+- `id()`
+- `delay(ms) `
+- `api.apiCall(apiPath, body, method = 'GET')`
+- `api.getMessages(channelId, params = {})`
+- `api.sendMessage(channelId, message, tts, body = {})`
+- `api.editMessage(channelId, messageId, newMessage, body = {})`
+- `api.deleteMessage(channelId, messageId)`
+- `api.sendEmbed(channelId, title, description, color)`
+- `api.auditLog(guildId)`
+- `api.getRoles(guildId)`
+- `api.createRole(guildId, name)`
+- `api.deleteRole(guildId, roleId)`
+- `api.getBans(guildId)`
+- `api.banUser(guildId, userId, reason)`
+- `api.unbanUser(guildId, userId)`
+- `api.kickUser(guildId, userId)`
+- `api.addRole(guildId, userId, roleId)`
+- `api.removeRole(guildId, userId, roleId)`
+- `api.getChannels(guildId)`
+- `api.createChannel(guildId, name, type)`
+- `api.pinnedMessages(channelId)`
+- `api.addPin(channelId, messageId)`
+- `api.deletePin(channelId, messageId)`
+- `api.changeNick(guildId, nick)`
+- `api.leaveServer(guildId)`
+- `api.getDMs()`
+- `api.getUser(userId)`
+- `api.addReaction(channelId, messageId, emojiUrl)`
+- `api.deleteReaction(channelId, messageId, emojiUrl)`
+- `api.typing(channelId)`
+
 ## `delay(ms)`
 
 `delay(ms: number) => Promise<void>`
@@ -143,6 +179,16 @@ Wait for `ms` milliseconds.
 
 ```js
 await delay(1500)
+```
+
+## `id()`
+
+`id() => void`
+
+Update the variable `gid` guild id and `cid` channel id to what you are currently watching in the Discord client.
+
+```js
+id()
 ```
 
 ## `api.getMessages(channelId)`
@@ -154,12 +200,8 @@ Get the last 100 messages from a channel (`channelId`).
 https://discord.com/developers/docs/resources/channel#get-channel-messages
 
 ```js
-await api.getMessages('826934811846377545')
-```
-
-```js
 {
-  let messages = await api.getMessages('826934811846377545')
+  let messages = await api.getMessages(cid)
   messages[0].author.username
 }
 ```
@@ -173,15 +215,7 @@ Send a `message` to a channel (`channelId`) with Text To Speach (`tts`, off by d
 https://discord.com/developers/docs/resources/channel#create-message
 
 ```js
-await api.sendMessage('826934811846377545', 'Hello!')
-await api.sendMessage('826934811846377545', 'Hello!', true)
-```
-
-```js
-{
-  let message = await api.sendMessage('826934811846377545', 'Hello!')
-  message.id
-}
+await api.sendMessage(cid, 'Hello!')
 ```
 
 ## `api.editMessage(channelId, messageId, newMessage)`
@@ -193,14 +227,7 @@ Edit a message (`messageId`) from a channel (`channelId`) and replace its conten
 https://discord.com/developers/docs/resources/channel#edit-message
 
 ```js
-await api.editMessage('826934811846377545', '853663267628122122', 'Hello! You good? 😊')
-```
-
-```js
-{
-  let message = await api.editMessage('826934811846377545', '853663267628122122', 'Hello! You good? 😊')
-  message.content
-}
+await api.editMessage(cid, 'message_id', 'Hello! You good? 😊')
 ```
 
 ## `api.deleteMessage(channelId, messageId)`
@@ -212,24 +239,7 @@ Delete a message (`messageId`) from a channel (`channelId`).
 https://discord.com/developers/docs/resources/channel#delete-message
 
 ```js
-await api.deleteMessage('826934811846377545', '853663267628122122')
-```
-
-```js
-{
-  let messages = await api.deleteMessage('826934811846377545', '853663267628122122')
-  messages[0]
-}
-```
-
-## `api.apiCall(apiPath, body, method)`
-
-`api.apiCall(apiPath: string, body: any, method = 'GET') => Promise<Message>`
-
-Do a raw API call.
-
-```js
-await api.apiCall(`/channels/${channelId}/messages`, { content: message }, 'POST')
+await api.deleteMessage(cid, 'message_id')
 ```
 
 # FAQ
@@ -256,7 +266,7 @@ Post your requests in the [Discussions](https://github.com/rigwild/discord-self-
 
 ## I made a nice/useful script, can I share?
 
-Of course! Post the [Discussions](https://github.com/rigwild/discord-self-bot-console/discussions) tab. Please search if a similar script was shared earlier before posting.
+Of course! Post it in the [Discussions](https://github.com/rigwild/discord-self-bot-console/discussions) tab. Please search if a similar script was shared earlier before posting.
 
 ## Why this repo?
 

@@ -8,8 +8,7 @@
       .join('&')
 
   const apiCall = (apiPath, body, method = 'GET') => {
-    if (!authHeader)
-      throw new Error("The authorization token is missing. Did you forget set it? `authHeader = 'your_token'`")
+    if (!authHeader) throw new Error("The authorization token is missing. Did you forget set it? `authHeader = 'your_token'`")
     return fetch(`${apiPrefix}${apiPath}`, {
       body: body ? JSON.stringify(body) : undefined,
       method,
@@ -18,8 +17,7 @@
         'Accept-Language': 'en-US',
         Authorization: authHeader,
         'Content-Type': 'application/json',
-        'User-Agent':
-          'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) discord/1.0.9002 Chrome/83.0.4103.122 Electron/9.3.5 Safari/537.36'
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) discord/1.0.9002 Chrome/83.0.4103.122 Electron/9.3.5 Safari/537.36'
       }
     })
       .then(res => res.json().catch(() => {}))
@@ -27,41 +25,64 @@
   }
 
   var api = {
-    /**
-     * Get the last 100 messages from a channel
-     * @see https://discord.com/developers/docs/resources/channel#get-channel-messages
-     */
-    getMessages(channelId, params = {}) {
-      return apiCall(`/channels/${channelId}/messages?limit=100&${qs(params)}`)
-    },
+    getMessages: (channelId, params = {}) => apiCall(`/channels/${channelId}/messages?limit=100&${qs(params)}`),
+    sendMessage: (channelId, message, tts, body = {}) => apiCall(`/channels/${channelId}/messages`, { content: message, tts: !!tts, ...body }, 'POST'),
+    editMessage: (channelId, messageId, newMessage, body = {}) => apiCall(`/channels/${channelId}/messages/${messageId}`, { content: newMessage, ...body }, 'PATCH'),
+    deleteMessage: (channelId, messageId) => apiCall(`/channels/${channelId}/messages/${messageId}`, null, 'DELETE'),
 
-    /**
-     * Send a message in a channel
-     * @see https://discord.com/developers/docs/resources/channel#create-message
-     */
-    sendMessage(channelId, message, tts, body = {}) {
-      return apiCall(`/channels/${channelId}/messages`, { content: message, tts: !!tts, ...body }, 'POST')
-    },
+    sendEmbed: (channelId, title, description, color) => apiCall(`/channels/${channelId}/messages`, { tts: false, embed: { title, description, color } }, 'POST'),
 
-    /**
-     * Edit a message
-     * @see https://discord.com/developers/docs/resources/channel#edit-message
-     */
-    editMessage(channelId, messageId, newMessage, body = {}) {
-      return apiCall(`/channels/${channelId}/messages/${messageId}`, { content: newMessage, ...body }, 'PATCH')
-    },
+    auditLog: guildId => apiCall(`/guilds/${guildId}/audit-logs`),
 
-    /**
-     * Delete a message from a channel
-     * @see https://discord.com/developers/docs/resources/channel#delete-message
-     */
-    deleteMessage(channelId, messageId) {
-      return apiCall(`/channels/${channelId}/messages/${messageId}`, null, 'DELETE')
-    },
+    getRoles: guildId => apiCall(`/guilds/${guildId}/roles`),
+    createRole: (guildId, name) => apiCall(`/guilds/${guildId}/roles`, { name }, 'POST'),
+    deleteRole: (guildId, roleId) => apiCall(`/guilds/${guildId}/roles/${roleId}`, null, 'DELETE'),
+
+    getBans: guildId => apiCall(`/guilds/${guildId}/bans`),
+    banUser: (guildId, userId, reason) => apiCall(`/guilds/${guildId}/bans/${userId}`, { delete_message_days: '7', reason }, 'PUT'),
+    unbanUser: (guildId, userId) => apiCall(`/guilds/${guildId}/bans/${userId}`, null, 'DELETE'),
+    kickUser: (guildId, userId) => apiCall(`/guilds/${guildId}/members/${userId}`, null, 'DELETE'),
+
+    addRole: (guildId, userId, roleId) => apiCall(`/guilds/${guildId}/members/${userId}/roles/${roleId}`, null, 'PUT'),
+    removeRole: (guildId, userId, roleId) => apiCall(`/guilds/${guildId}/members/${userId}/roles/${roleId}`, null, 'DELETE'),
+
+    getChannels: guildId => apiCall(`/guilds/${guildId}/channels`),
+    createChannel: (guildId, name, type) => apiCall(`/guilds/${guildId}/channels`, { name, type }, 'POST'),
+
+    pinnedMessages: channelId => apiCall(`/channels/${channelId}/pins`),
+    addPin: (channelId, messageId) => apiCall(`/channels/${channelId}/pins/${messageId}`, null, 'PUT'),
+    deletePin: (channelId, messageId) => apiCall(`/channels/${channelId}/pins/${messageId}`, null, 'DELETE'),
+
+    changeNick: (guildId, nick) => apiCall(`/guilds/${guildId}/members/@me/nick`, { nick }, 'PATCH'),
+    leaveServer: guildId => apiCall(`/users/@me/guilds/${guildId}`, null, 'DELETE'),
+
+    getDMs: () => apiCall(`/users/@me/channels`),
+    getUser: userId => apiCall(`/users/${userId}`),
+
+    addReaction: (channelId, messageId, emojiUrl) => apiCall(`/channels/${channelId}/messages/${messageId}/reactions/${emojiUrl}/@me`, null, 'PUT'),
+    deleteReaction: (channelId, messageId, emojiUrl) => apiCall(`/channels/${channelId}/messages/${messageId}/reactions/${emojiUrl}/@me`, null, 'DELETE'),
+
+    typing: channelId => apiCall(`/channels/${channelId}/typing`, null, 'POST'),
 
     delay,
     apiCall
   }
+
+  console.log('\n\n\n\nSelfbot loaded! Use it like this: `await api.someFunction()`')
+  console.log('Abusing this could get you banned from Discord, use at your own risk!')
+  console.log()
+  console.log('Use the `id()` function to update the variable `gid` guild id and `cid` channel id to what you are currently watching.')
+  console.log('https://github.com/rigwild/discord-self-bot-console')
+
+  var gid = '' // Current guild id
+  var cid = '' // Current channel id
+
+  // Call this to update `cid` and `gid` to current channel and guild id
+  var id = () => {
+    gid = window.location.href.split('/').slice(4)[0]
+    cid = window.location.href.split('/').slice(4)[1]
+  }
+  id()
 
   // Set your `Authorization` token here
   var authHeader = ''
