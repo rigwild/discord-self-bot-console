@@ -163,10 +163,19 @@ Here is the full list of available functions, check [`index.js`](./index.js).
 - `api.pinnedMessages(channelId)`
 - `api.addPin(channelId, messageId)`
 - `api.deletePin(channelId, messageId)`
+- `api.listEmojis(guildId)`
+- `api.getEmoji(guildId, emojiId)`
+- `api.createEmoji(guildId, name, image, roles)`
+- `api.editEmoji(guildId, emojiId, name, roles)`
+- `api.deleteEmoji(guildId, emojiId)`
 - `api.changeNick(guildId, nick)`
 - `api.leaveServer(guildId)`
 - `api.getDMs()`
 - `api.getUser(userId)`
+- `api.getCurrentUser()`
+- `api.editCurrentUser(username, avatar)`
+- `api.listCurrentUserGuilds()`
+- `api.listReactions(channelId, messageId, emojiUrl)`
 - `api.addReaction(channelId, messageId, emojiUrl)`
 - `api.deleteReaction(channelId, messageId, emojiUrl)`
 - `api.typing(channelId)`

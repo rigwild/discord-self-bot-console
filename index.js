@@ -53,12 +53,23 @@
     addPin: (channelId, messageId) => apiCall(`/channels/${channelId}/pins/${messageId}`, null, 'PUT'),
     deletePin: (channelId, messageId) => apiCall(`/channels/${channelId}/pins/${messageId}`, null, 'DELETE'),
 
+    listEmojis: guildId => apiCall(`/guilds/${guildId}/emojis`),
+    getEmoji: (guildId, emojiId) => apiCall(`/guilds/${guildId}/emojis/${emojiId}`),
+    createEmoji: (guildId, name, image, roles) => apiCall(`/guilds/${guildId}`, { name, image, roles }, 'POST'),
+    editEmoji: (guildId, emojiId, name, roles) => apiCall(`/guilds/${guildId}/${emojiId}`, { name, roles }, 'PATCH'),
+    deleteEmoji: (guildId, emojiId) => apiCall(`/guilds/${guildId}/${emojiId}`, null, 'DELETE'),
+
     changeNick: (guildId, nick) => apiCall(`/guilds/${guildId}/members/@me/nick`, { nick }, 'PATCH'),
     leaveServer: guildId => apiCall(`/users/@me/guilds/${guildId}`, null, 'DELETE'),
 
     getDMs: () => apiCall(`/users/@me/channels`),
     getUser: userId => apiCall(`/users/${userId}`),
 
+    getCurrentUser: () => apiCall('/users/@me'),
+    editCurrentUser: (username, avatar) => apiCall('/users/@me', { username, avatar }, 'PATCH'),
+    listCurrentUserGuilds: () => apiCall('/users/@me/guilds'),
+
+    listReactions: (channelId, messageId, emojiUrl) => apiCall(`/channels/${channelId}/messages/${messageId}/reactions/${emojiUrl}/@me`),
     addReaction: (channelId, messageId, emojiUrl) => apiCall(`/channels/${channelId}/messages/${messageId}/reactions/${emojiUrl}/@me`, null, 'PUT'),
     deleteReaction: (channelId, messageId, emojiUrl) => apiCall(`/channels/${channelId}/messages/${messageId}/reactions/${emojiUrl}/@me`, null, 'DELETE'),
 
@@ -78,11 +89,15 @@
   var cid = '' // Current channel id
 
   // Call this to update `cid` and `gid` to current channel and guild id
-  var id = () => {
+  var id = (log = true) => {
     gid = window.location.href.split('/').slice(4)[0]
     cid = window.location.href.split('/').slice(4)[1]
+    if (log) {
+      console.log(`\`gid\` was set to the guild id you are currently looking at (${gid})`)
+      console.log(`\`cid\` was set to the channel id you are currently looking at (${cid})`)
+    }
   }
-  id()
+  id(false)
 
   // Set your `Authorization` token here
   var authHeader = ''
