@@ -1,6 +1,6 @@
 # Discord self-bot console
 
-A simple Discord Self-bot using console. Intended for quick scripts runnable directly from the devtools.
+A simple Discord Self-bot using console. Intended for quick scripts runnable directly from the devtools. Can also be [used with Node.js](https://github.com/rigwild/discord-self-bot-console/discussions/4#discussioncomment-1438231) for quick simple scripts!
 
 # Disclaimer
 
@@ -8,13 +8,15 @@ Automating user accounts is against [Discord's Terms of Service](https://discord
 
 # Usage
 
-1. Open Chrome devtools on Discord using `Ctrl + shift + i` and go to the console tab
+1. Open Chrome devtools on Discord using `Ctrl + shift + i`
 1. Go to the console tab and paste the entire [`index.js`](./index.js) script
 1. Go to the network tab and send a message in any channel/DM
 1. A new entry should appear, click it then copy the `Authorization` header (in the `Request Headers` section)
 1. Paste it in `authHeader` at the end of the script in the console
 1. ...
 1. Profit!
+
+![How to use video](./howto.gif)
 
 You can now use any function one by one as you like directly in the console `await api.someFunction()`. Don't forget `await` or the server's response will not be printed to the console.
 
@@ -36,15 +38,21 @@ Update `cid` to the channel you are watching, get the last 100 messages, send a 
   // Send a message
   let sentMessage = await api.sendMessage(channelId, 'Hello!')
 
-  await delay(3000)
+  await delay(2000)
 
   // Edit a message
   let editedMessage = await api.editMessage(channelId, sentMessage.id, 'Hello, edited!')
 
-  await delay(3000)
+  await delay(2000)
 
   // Delete a message
   await api.deleteMessage(channelId, editedMessage.id)
+
+  await delay(2000)
+
+  // Log the last 100 messages
+  let messages = await api.getMessages(channelId)
+  console.log(messages)
 }
 ```
 
@@ -53,6 +61,14 @@ Update `cid` to the channel you are watching, get the last 100 messages, send a 
 See [How to send an embed?](https://github.com/rigwild/discord-self-bot-console/discussions/6)
 
 ![embed example](https://user-images.githubusercontent.com/26366184/145406696-8734410a-fc08-40e3-abf8-de12d8d89db9.png)
+
+## Run in Node.js
+
+See [Can I run it without opening Discord?](https://github.com/rigwild/discord-self-bot-console/discussions/4)
+
+## List all usable emojis
+
+See [List of all emoji url's you have access to](https://github.com/rigwild/discord-self-bot-console/discussions/2)
 
 ## Farm XP
 
@@ -86,8 +102,6 @@ I use sometimes to fully clear my DMs as Discord does not offer it as a feature.
 You can use `loop = false` at any time to stop it.
 
 Discord recently made its rate limiting strictier. I recommend 1100ms as a minimum to not get rate limited. Make it even bigger if you are affraid of getting banned.
-
-(You can use https://github.com/rigwild/discord-purge-messages too!)
 
 ```js
 {
@@ -140,6 +154,36 @@ Discord recently made its rate limiting strictier. I recommend 1100ms as a minim
 }
 ```
 
+# FAQ
+
+## Will I get banned if I do x?
+
+I don't know, maybe. I have used lots of scripts in the past, often deleted 100k+ messages of mine accross private messages and servers and never got banned, ever.
+
+But I can't guarantee anything. Use at your own risk.
+
+Automating user accounts is againt [Discord's Terms of Service](https://discord.com/terms).
+
+## Listen to events, do some advanced stuff
+
+This is intended for small scripts, not to implement a full-featured bot.
+
+If you need to listen to events or do something more advanced you can use the [discord.js](https://github.com/discordjs/discord.js) package with your user token (with v11.3.2 and below though, they deprecated user token support starting v11.4.0!).
+
+**Note:** As they don't support user bots anymore, it may break at any time (with Discord changing their APIs).
+
+## Can it do x? Can you help me?
+
+Post your requests in the [Discussions](https://github.com/rigwild/discord-self-bot-console/discussions) tab. Please search if your request was not mentionned in an earlier post before asking.
+
+## I made a nice/useful script, can I share?
+
+Of course! Post it in the [Discussions](https://github.com/rigwild/discord-self-bot-console/discussions) tab. Please search if a similar script was shared earlier before posting.
+
+## Why this repo?
+
+Initially, this was posted as [a gist for myself](https://gist.github.com/rigwild/28f5d9479e3e122070e27db84e104719). As there's interest for such a thing, I figured out making a proper repo was better to share scripts.
+
 # API
 
 ## Full list
@@ -154,6 +198,10 @@ Here is the full list of available functions, check [`index.js`](./index.js).
 - `api.editMessage(channelId, messageId, newMessage, body = {})`
 - `api.deleteMessage(channelId, messageId)`
 - `api.sendEmbed(channelId, title, description, color)`
+- `api.sendEmbed: (channelId, embed = { title: 'Title', description: 'Description' })`
+
+  - See [How to send an embed?](https://github.com/rigwild/discord-self-bot-console/discussions/6) - Use this [embed generator](https://discord.club/dashboard)
+
 - `api.auditLog(guildId)`
 - `api.getRoles(guildId)`
 - `api.createRole(guildId, name)`
@@ -205,87 +253,6 @@ Update the variable `gid` guild id and `cid` channel id to what you are currentl
 ```js
 id()
 ```
-
-## `api.getMessages(channelId)`
-
-`api.getMessages(channelId: string) => Promise<Message[]>`
-
-Get the last 100 messages from a channel (`channelId`).
-
-https://discord.com/developers/docs/resources/channel#get-channel-messages
-
-```js
-{
-  let messages = await api.getMessages(cid)
-  messages[0].author.username
-}
-```
-
-## `api.sendMessage(channelId, message, tts)`
-
-`api.sendMessage(channelId: string, message: string, tts = false) => Promise<Message>`
-
-Send a `message` to a channel (`channelId`) with Text To Speach (`tts`, off by default).
-
-https://discord.com/developers/docs/resources/channel#create-message
-
-```js
-await api.sendMessage(cid, 'Hello!')
-```
-
-## `api.editMessage(channelId, messageId, newMessage)`
-
-`api.editMessage(channelId: string, messageId: string, newMessage: string) => Promise<Message>`
-
-Edit a message (`messageId`) from a channel (`channelId`) and replace its content with `newMessage`.
-
-https://discord.com/developers/docs/resources/channel#edit-message
-
-```js
-await api.editMessage(cid, 'message_id', 'Hello! You good? 😊')
-```
-
-## `api.deleteMessage(channelId, messageId)`
-
-`api.deleteMessage(channelId: string, messageId: string) => Promise<Message>`
-
-Delete a message (`messageId`) from a channel (`channelId`).
-
-https://discord.com/developers/docs/resources/channel#delete-message
-
-```js
-await api.deleteMessage(cid, 'message_id')
-```
-
-# FAQ
-
-## Will I get banned if I do x?
-
-I don't know, maybe. I have used lots of scripts in the past, often deleted 100k+ messages of mine accross private messages and servers and never got banned, ever.
-
-But I can't guarantee anything. Use at your own risk.
-
-Automating user accounts is againt [Discord's Terms of Service](https://discord.com/terms).
-
-## Listen to events, do some advanced stuff
-
-This is intended for small scripts, not to implement a full-featured bot.
-
-If you need to listen to events or do something more advanced you can use the [discord.js](https://github.com/discordjs/discord.js) package with your user token (with v11.3.2 and below though, they deprecated user token support starting v11.4.0!).
-
-**Note:** As they don't support user bots anymore, it may break at any time (with Discord changing their APIs).
-
-## Can it do x? Can you help me?
-
-Post your requests in the [Discussions](https://github.com/rigwild/discord-self-bot-console/discussions) tab. Please search if your request was not mentionned in an earlier post before asking.
-
-## I made a nice/useful script, can I share?
-
-Of course! Post it in the [Discussions](https://github.com/rigwild/discord-self-bot-console/discussions) tab. Please search if a similar script was shared earlier before posting.
-
-## Why this repo?
-
-Initially, this was posted as [a gist for myself](https://gist.github.com/rigwild/28f5d9479e3e122070e27db84e104719). As there's interest for such a thing, I figured out making a proper repo was better to share scripts.
 
 # License
 
