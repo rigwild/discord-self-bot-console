@@ -48,6 +48,12 @@ Update `cid` to the channel you are watching, get the last 100 messages, send a 
 }
 ```
 
+## Send an embed
+
+See [How to send an embed?](https://github.com/rigwild/discord-self-bot-console/discussions/6)
+
+![embed example](https://user-images.githubusercontent.com/26366184/145406696-8734410a-fc08-40e3-abf8-de12d8d89db9.png)
+
 ## Farm XP
 
 Send a `message` to a channel (`channelId`) every minute then delete it (useful for XP farming in some servers).

@@ -30,7 +30,9 @@
     editMessage: (channelId, messageId, newMessage, body = {}) => apiCall(`/channels/${channelId}/messages/${messageId}`, { content: newMessage, ...body }, 'PATCH'),
     deleteMessage: (channelId, messageId) => apiCall(`/channels/${channelId}/messages/${messageId}`, null, 'DELETE'),
 
-    sendEmbed: (channelId, title, description, color) => apiCall(`/channels/${channelId}/messages`, { tts: false, embed: { title, description, color } }, 'POST'),
+    // Use this generator: https://discord.club/dashboard
+    // Click `+` at the bottom in the embed section then copy the `embed` key in the JSON output.
+    sendEmbed: (channelId, embed = { title: 'Title', description: 'Description' }) => apiCall(`/channels/${channelId}/messages`, { embed }, 'POST'),
 
     auditLog: guildId => apiCall(`/guilds/${guildId}/audit-logs`),
 
