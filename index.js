@@ -1,15 +1,11 @@
 {
-  const apiPrefix = 'https://discord.com/api/v9'
-
   var delay = ms => new Promise(res => setTimeout(res, ms))
-  var qs = obj =>
-    Object.entries(obj)
-      .map(([k, v]) => `${k}=${v}`)
-      .join('&')
+  // prettier-ignore
+  var qs = obj => Object.entries(obj).map(([k, v]) => `${k}=${v}`).join('&')
 
   const apiCall = (apiPath, body, method = 'GET') => {
-    if (!authHeader) throw new Error("The authorization token is missing. Did you forget set it? `authHeader = 'your_token'`")
-    return fetch(`${apiPrefix}${apiPath}`, {
+    if (!authHeader) throw new Error("The authorization token is missing. Did you forget to set it? `authHeader = 'your_token'`")
+    return fetch(`https://discord.com/api/v9${apiPath}`, {
       body: body ? JSON.stringify(body) : undefined,
       method,
       headers: {
@@ -17,7 +13,7 @@
         'Accept-Language': 'en-US',
         Authorization: authHeader,
         'Content-Type': 'application/json',
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) discord/1.0.9002 Chrome/83.0.4103.122 Electron/9.3.5 Safari/537.36'
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) discord/1.0.9003 Chrome/91.0.4472.164 Electron/13.4.0 Safari/537.36'
       }
     })
       .then(res => res.json().catch(() => {}))
@@ -101,6 +97,17 @@
   }
   id(false)
 
-  // Set your `Authorization` token here
   var authHeader = ''
+
+  if (!XMLHttpRequest_setRequestHeader) {
+    var XMLHttpRequest_setRequestHeader = XMLHttpRequest.prototype.setRequestHeader
+  }
+  // Auto update the authHeader when a request with the token is intercepted
+  XMLHttpRequest.prototype.setRequestHeader = function () {
+    if (arguments[0] === 'Authorization' && authHeader !== arguments[1]) {
+      authHeader = arguments[1]
+      console.log('Updated the Auth token!', authHeader)
+    }
+    XMLHttpRequest_setRequestHeader.apply(this, arguments)
+  }
 }

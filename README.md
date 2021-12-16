@@ -10,15 +10,11 @@ Automating user accounts is against [Discord's Terms of Service](https://discord
 
 1. Open Chrome devtools on Discord using `Ctrl + shift + i`
 1. Go to the console tab and paste the entire [`index.js`](./index.js) script
-1. Go to the network tab and send a message in any channel/DM
-1. A new entry should appear, click it then copy the `Authorization` header (in the `Request Headers` section)
-1. Paste it in `authHeader` at the end of the script in the console
+1. Send a message in any channel/DM, this will set your auth token into the script
 1. ...
 1. Profit!
 
-![How to use video](./howto.gif)
-
-You can now use any function one by one as you like directly in the console `await api.someFunction()`. Don't forget `await` or the server's response will not be printed to the console.
+You can now use any function provided by this script in the console like `await api.someFunction()`. Don't forget `await` or the server's response will not be printed to the console.
 
 Use the `id()` function to update the variable `gid` guild id and `cid` channel id to what you are currently watching.
 
@@ -197,11 +193,8 @@ Here is the full list of available functions, check [`index.js`](./index.js).
 - `api.sendMessage(channelId, message, tts, body = {})`
 - `api.editMessage(channelId, messageId, newMessage, body = {})`
 - `api.deleteMessage(channelId, messageId)`
-- `api.sendEmbed(channelId, title, description, color)`
 - `api.sendEmbed: (channelId, embed = { title: 'Title', description: 'Description' })`
-
   - See [How to send an embed?](https://github.com/rigwild/discord-self-bot-console/discussions/6) - Use this [embed generator](https://discord.club/dashboard)
-
 - `api.auditLog(guildId)`
 - `api.getRoles(guildId)`
 - `api.createRole(guildId, name)`
