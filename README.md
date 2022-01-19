@@ -62,6 +62,12 @@ See [How to send an embed?](https://github.com/rigwild/discord-self-bot-console/
 
 See [Can I run it without opening Discord?](https://github.com/rigwild/discord-self-bot-console/discussions/4)
 
+## Use a bot account
+
+This specific script only works for user accounts. If you want to use a bot account, you need to use the provided Node.js version (see above).
+
+[Why can't I use a bot account with the Discord client?](https://github.com/rigwild/discord-self-bot-console/discussions/4#discussioncomment-1999680)
+
 ## List all usable emojis
 
 See [List of all emoji url's you have access to](https://github.com/rigwild/discord-self-bot-console/discussions/2)
@@ -193,7 +199,7 @@ Here is the full list of available functions, check [`index.js`](./index.js).
 - `api.sendMessage(channelId, message, tts, body = {})`
 - `api.editMessage(channelId, messageId, newMessage, body = {})`
 - `api.deleteMessage(channelId, messageId)`
-- `api.sendEmbed: (channelId, embed = { title: 'Title', description: 'Description' })`
+- `api.sendEmbed(channelId, embed = { title: 'Title', description: 'Description' })`
   - See [How to send an embed?](https://github.com/rigwild/discord-self-bot-console/discussions/6) - Use this [embed generator](https://discord.club/dashboard)
 - `api.auditLog(guildId)`
 - `api.getRoles(guildId)`
