@@ -80,8 +80,11 @@
   console.log('\n\n\n\nSelfbot loaded! Use it like this: `await api.someFunction()`')
   console.log('Abusing this could get you banned from Discord, use at your own risk!')
   console.log()
-  console.log('This script not work with bot accounts! Run with Node.js or use a proper lib like discord.js!')
-  console.log('See https://github.com/rigwild/discord-self-bot-console/discussions/4#discussioncomment-1438231')
+  console.log(
+    'This script does **not** work with bot accounts! ' +
+      'If you have a bot account, use Node.js (or a proper lib like discord.js!) with the modified script ' +
+      'https://github.com/rigwild/discord-self-bot-console/discussions/4#discussioncomment-1438231'
+  )
   console.log()
   console.log('Use the `id()` function to update the variable `gid` guild id and `cid` channel id to what you are currently watching.')
   console.log('https://github.com/rigwild/discord-self-bot-console')

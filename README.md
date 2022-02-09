@@ -8,11 +8,16 @@ Automating user accounts is against [Discord's Terms of Service](https://discord
 
 # Usage
 
-1. Open Chrome devtools on Discord using `Ctrl + shift + i`
-1. Go to the console tab and paste the entire [`index.js`](./index.js) script
-1. Send a message in any channel/DM, this will set your auth token into the script
-1. ...
-1. Profit!
+1. Close Discord client
+2. Open the file at `%appdata%/discord/settings.json`
+3. Add `"DANGEROUS_ENABLE_DEVTOOLS_ONLY_ENABLE_IF_YOU_KNOW_WHAT_YOURE_DOING": true,` (this is necessary [since last update](https://www.reddit.com/r/discordapp/comments/sc61n3/comment/hu4fw5x))
+4. Save the file
+5. Restart Discord client
+6. Open Chrome devtools on Discord using `Ctrl + shift + i`
+7. Go to the console tab and paste the entire [`index.js`](./index.js) script
+8. Send a message in any channel/DM, this will set your auth token into the script
+9. ...
+10. Profit!
 
 You can now use any function provided by this script in the console like `await api.someFunction()`. Don't forget `await` or the server's response will not be printed to the console.
 
