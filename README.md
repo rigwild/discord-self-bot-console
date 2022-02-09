@@ -59,6 +59,8 @@ Update `cid` to the channel you are watching, get the last 100 messages, send a 
 
 ## Send an embed
 
+**SENDING EMBEDS AS A USER ACCOUNT IS NOT POSSIBLE ANYMORE, DISCORD UPDATED ITS API (see [this reddit post](https://web.archive.org/web/20220209223900/https://www.reddit.com/r/Discord_selfbots/comments/sa0hc2/discord_embeds_patched/))**
+
 See [How to send an embed?](https://github.com/rigwild/discord-self-bot-console/discussions/6)
 
 ![embed example](https://user-images.githubusercontent.com/26366184/145406696-8734410a-fc08-40e3-abf8-de12d8d89db9.png)
