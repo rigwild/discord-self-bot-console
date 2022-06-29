@@ -3,6 +3,18 @@
   // prettier-ignore
   var qs = obj => Object.entries(obj).map(([k, v]) => `${k}=${v}`).join('&')
 
+  const xSuperPropertiesObj = {
+    os: 'Windows',
+    browser: 'Discord Client',
+    release_channel: 'stable',
+    client_version: '1.0.9005',
+    os_version: '10.0.22000',
+    os_arch: 'x64',
+    system_locale: 'en-US',
+    client_build_number: 133852,
+    client_event_source: null
+  }
+
   const apiCall = (apiPath, body, method = 'GET') => {
     if (!authHeader) throw new Error("The authorization token is missing. Did you forget to set it? `authHeader = 'your_token'`")
     return fetch(`https://discord.com/api/v9${apiPath}`, {
@@ -13,7 +25,8 @@
         'Accept-Language': 'en-US',
         Authorization: authHeader,
         'Content-Type': 'application/json',
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) discord/1.0.9003 Chrome/91.0.4472.164 Electron/13.4.0 Safari/537.36'
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) discord/1.0.9005 Chrome/91.0.4472.164 Electron/13.6.6 Safari/537.36',
+        'S-Super-Properties': btoa(JSON.stringify(xSuperPropertiesObj))
       }
     })
       .then(res => res.json().catch(() => {}))
