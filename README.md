@@ -8,16 +8,26 @@ Automating user accounts is against [Discord's Terms of Service](https://discord
 
 # Usage
 
-1. Close Discord client
+1. Close Discord client (`Quit Discord` in system tray)
 2. Open the file at `%appdata%/discord/settings.json`
 3. Add `"DANGEROUS_ENABLE_DEVTOOLS_ONLY_ENABLE_IF_YOU_KNOW_WHAT_YOURE_DOING": true,` (this is necessary [since last update](https://www.reddit.com/r/discordapp/comments/sc61n3/comment/hu4fw5x))
 4. Save the file
 5. Restart Discord client
 6. Open Chrome devtools on Discord using `Ctrl + shift + i`
 7. Go to the console tab and paste the entire [`index.js`](./index.js) script
-8. Send a message in any channel/DM, this will set your auth token into the script
+8. Send a message in any channel/DM, this will automatically set your auth token into the script
 9. ...
 10. Profit!
+
+If you want to disable the token from being automatically set, use `autoUpdateToken = false` at the start of your bot script. You can extract the auth token manually by doing this:
+
+6. Open Chrome devtools on Discord using `Ctrl + shift + i`
+7. Go to the console tab and paste the entire [`index.js`](./index.js) script
+8. Go to the network tab and send a message in any channel/DM
+9. A new entry should appear, click it then copy the `Authorization` header (in the `Request Headers` section)
+10. Paste it in `authHeader` at the end of the script in the console
+
+![How to use video](./howto.gif)
 
 You can now use any function provided by this script in the console like `await api.someFunction()`. Don't forget `await` or the server's response will not be printed to the console.
 
@@ -68,6 +78,10 @@ See [How to send an embed?](https://github.com/rigwild/discord-self-bot-console/
 ## Run in Node.js
 
 See [Can I run it without opening Discord?](https://github.com/rigwild/discord-self-bot-console/discussions/4)
+
+## Use multiple account tokens
+
+See [Is it possible to use multiple tokens?](https://github.com/rigwild/discord-self-bot-console/discussions/21)
 
 ## Use a bot account
 
@@ -259,6 +273,13 @@ Update the variable `gid` guild id and `cid` channel id to what you are currentl
 ```js
 id()
 ```
+
+## Variables
+
+- `authHeader`: You Discord account auth token
+- `autoUpdateToken`: If true, the token will be automatically updated in the bot when a request is sent from the client (e.g sending a message)
+- `gid`: Current guild id (update to what you are currently watching using `id()`)
+- `cid`: Current channel id (update to what you are currently watching using `id()`)
 
 # License
 

@@ -117,13 +117,14 @@
   id(false)
 
   var authHeader = ''
+  var autoUpdateToken = true
 
   if (!XMLHttpRequest_setRequestHeader) {
     var XMLHttpRequest_setRequestHeader = XMLHttpRequest.prototype.setRequestHeader
   }
   // Auto update the authHeader when a request with the token is intercepted
   XMLHttpRequest.prototype.setRequestHeader = function () {
-    if (arguments[0] === 'Authorization' && authHeader !== arguments[1]) {
+    if (autoUpdateToken && arguments[0] === 'Authorization' && authHeader !== arguments[1]) {
       authHeader = arguments[1]
       console.log('Updated the Auth token!', authHeader)
     }
