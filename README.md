@@ -100,12 +100,15 @@ See [List of all emoji url's you have access to](https://github.com/rigwild/disc
   id()
   let channelId = cid
 
-  const sentMessage = await api.sendMessage(channelId, 'Hello, please open a thread! 💕')
+  const sentMessage = await api.sendMessage(channelId, 'Hello, please open a thread here! 💕')
 
+  // A new thread opened in reply to a message
   const createdThread = await api.createThread(channelId, sentMessage.id, 'A cool thread 🤔')
   const sentMessage2 = await api.sendMessage(createdThread.id, 'Here it is, this is a thread! 😁')
-
   await api.replyToMessage(createdThread.id, sentMessage2.id, 'Thanks! ✌️')
+
+  // A clean new thread without any message in it (not opened on any message!)
+  await api.createThreadWithoutMessage(channelId, 'Another thread 😁')
 }
 ```
 
@@ -158,7 +161,7 @@ Discord recently made its rate limiting strictier. I recommend 1100ms as a minim
     const messages = await api.getMessages(channelId, { before: beforeMessageId })
 
     // We reached the start of the conversation
-    if (messages.length < 100 && messages.filter(x => x.author.id === userId && x.type === 0).length === 0) {
+    if (messages.length < 100 && messages.filter(x => x.author.id === userId && (x.type === 0 || x.type === 19)).length === 0) {
       loop = false
       console.log(`[${deletionCount}/${amount}] Reached the start of the conversations! Ending.`)
       continue
@@ -181,7 +184,7 @@ Discord recently made its rate limiting strictier. I recommend 1100ms as a minim
       beforeMessageId = aMessage.id
 
       // Check if the message should be deleted
-      if (aMessage.author.id === userId && aMessage.type === 0) {
+      if (aMessage.author.id === userId && (aMessage.type === 0 || aMessage.type === 19)) {
         await api.deleteMessage(channelId, aMessage.id)
         deletionCount++
         console.log(`[${deletionCount}/${amount}] Deleted a message!`)
@@ -232,13 +235,15 @@ Here is the full list of available functions, check [`index.js`](./index.js).
 - `id()`
 - `delay(ms) `
 - `api.apiCall(apiPath, body, method = 'GET')`
-- `api.getMessages(channelOrMessageThreadId, params = {})`
-- `api.sendMessage(channelOrMessageThreadId, message, tts, body = {})`
-- `api.replyToMessage(channelOrMessageThreadId, repliedMessageId, message, tts, body = {})`
-- `api.editMessage(channelOrMessageThreadId, messageId, newMessage, body = {})`
-- `api.deleteMessage(channelOrMessageThreadId, messageId)`
+- `api.getMessages(channelOrThreadId, params = {})`
+- `api.sendMessage(channelOrThreadId, message, tts, body = {})`
+- `api.replyToMessage(channelOrThreadId, repliedMessageId, message, tts, body = {})`
+- `api.editMessage(channelOrThreadId, messageId, newMessage, body = {})`
+- `api.deleteMessage(channelOrThreadId, messageId)`
 - `api.createThread(channelId, toOpenThreadInmessageId, name, body = {})`
-- `api.sendEmbed(channelOrMessageThreadId, embed = { title: 'Title', description: 'Description' })`
+- `api.createThreadWithoutMessage(channelId, name, body = {})`
+- `api.deleteThread(threadId)`
+- `api.sendEmbed(channelOrThreadId, embed = { title: 'Title', description: 'Description' })`
   - See [How to send an embed?](https://github.com/rigwild/discord-self-bot-console/discussions/6) - Use this [embed generator](https://discord.club/dashboard)
 - `api.auditLog(guildId)`
 - `api.getRoles(guildId)`
@@ -252,6 +257,7 @@ Here is the full list of available functions, check [`index.js`](./index.js).
 - `api.removeRole(guildId, userId, roleId)`
 - `api.getChannels(guildId)`
 - `api.createChannel(guildId, name, type)`
+- `api.deleteChannel(channelId)`
 - `api.pinnedMessages(channelId)`
 - `api.addPin(channelId, messageId)`
 - `api.deletePin(channelId, messageId)`
@@ -267,10 +273,10 @@ Here is the full list of available functions, check [`index.js`](./index.js).
 - `api.getCurrentUser()`
 - `api.editCurrentUser(username, avatar)`
 - `api.listCurrentUserGuilds()`
-- `api.listReactions(channelOrMessageThreadId, messageId, emojiUrl)`
-- `api.addReaction(channelOrMessageThreadId, messageId, emojiUrl)`
-- `api.deleteReaction(channelOrMessageThreadId, messageId, emojiUrl)`
-- `api.typing(channelOrMessageThreadId)`
+- `api.listReactions(channelOrThreadId, messageId, emojiUrl)`
+- `api.addReaction(channelOrThreadId, messageId, emojiUrl)`
+- `api.deleteReaction(channelOrThreadId, messageId, emojiUrl)`
+- `api.typing(channelOrThreadId)`
 
 ## `delay(ms)`
 
