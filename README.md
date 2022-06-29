@@ -93,6 +93,22 @@ This specific script only works for user accounts. If you want to use a bot acco
 
 See [List of all emoji url's you have access to](https://github.com/rigwild/discord-self-bot-console/discussions/2)
 
+## Open a thread
+
+```js
+{
+  id()
+  let channelId = cid
+
+  const sentMessage = await api.sendMessage(channelId, 'Hello, please open a thread! 💕')
+
+  const createdThread = await api.createThread(channelId, sentMessage.id, 'A cool thread 🤔')
+  const sentMessage2 = await api.sendMessage(createdThread.id, 'Here it is, this is a thread! 😁')
+
+  await api.replyToMessage(createdThread.id, sentMessage2.id, 'Thanks! ✌️')
+}
+```
+
 ## Farm XP
 
 Send a `message` to a channel (`channelId`) every minute then delete it (useful for XP farming in some servers).
@@ -216,11 +232,13 @@ Here is the full list of available functions, check [`index.js`](./index.js).
 - `id()`
 - `delay(ms) `
 - `api.apiCall(apiPath, body, method = 'GET')`
-- `api.getMessages(channelId, params = {})`
-- `api.sendMessage(channelId, message, tts, body = {})`
-- `api.editMessage(channelId, messageId, newMessage, body = {})`
-- `api.deleteMessage(channelId, messageId)`
-- `api.sendEmbed(channelId, embed = { title: 'Title', description: 'Description' })`
+- `api.getMessages(channelOrMessageThreadId, params = {})`
+- `api.sendMessage(channelOrMessageThreadId, message, tts, body = {})`
+- `api.replyToMessage(channelOrMessageThreadId, repliedMessageId, message, tts, body = {})`
+- `api.editMessage(channelOrMessageThreadId, messageId, newMessage, body = {})`
+- `api.deleteMessage(channelOrMessageThreadId, messageId)`
+- `api.createThread(channelId, toOpenThreadInmessageId, name, body = {})`
+- `api.sendEmbed(channelOrMessageThreadId, embed = { title: 'Title', description: 'Description' })`
   - See [How to send an embed?](https://github.com/rigwild/discord-self-bot-console/discussions/6) - Use this [embed generator](https://discord.club/dashboard)
 - `api.auditLog(guildId)`
 - `api.getRoles(guildId)`
@@ -249,10 +267,10 @@ Here is the full list of available functions, check [`index.js`](./index.js).
 - `api.getCurrentUser()`
 - `api.editCurrentUser(username, avatar)`
 - `api.listCurrentUserGuilds()`
-- `api.listReactions(channelId, messageId, emojiUrl)`
-- `api.addReaction(channelId, messageId, emojiUrl)`
-- `api.deleteReaction(channelId, messageId, emojiUrl)`
-- `api.typing(channelId)`
+- `api.listReactions(channelOrMessageThreadId, messageId, emojiUrl)`
+- `api.addReaction(channelOrMessageThreadId, messageId, emojiUrl)`
+- `api.deleteReaction(channelOrMessageThreadId, messageId, emojiUrl)`
+- `api.typing(channelOrMessageThreadId)`
 
 ## `delay(ms)`
 

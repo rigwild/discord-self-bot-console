@@ -34,14 +34,19 @@
   }
 
   var api = {
-    getMessages: (channelId, params = {}) => apiCall(`/channels/${channelId}/messages?limit=100&${qs(params)}`),
-    sendMessage: (channelId, message, tts, body = {}) => apiCall(`/channels/${channelId}/messages`, { content: message, tts: !!tts, ...body }, 'POST'),
-    editMessage: (channelId, messageId, newMessage, body = {}) => apiCall(`/channels/${channelId}/messages/${messageId}`, { content: newMessage, ...body }, 'PATCH'),
-    deleteMessage: (channelId, messageId) => apiCall(`/channels/${channelId}/messages/${messageId}`, null, 'DELETE'),
+    getMessages: (channelOrMessageThreadId, limit = 100, params = {}) => apiCall(`/channels/${channelOrMessageThreadId}/messages?limit=${limit}&${qs(params)}`),
+    sendMessage: (channelOrMessageThreadId, message, tts, body = {}) => apiCall(`/channels/${channelOrMessageThreadId}/messages`, { content: message, tts: !!tts, ...body }, 'POST'),
+    replyToMessage: (channelOrMessageThreadId, repliedMessageId, message, tts, body = {}) =>
+      apiCall(`/channels/${channelOrMessageThreadId}/messages`, { content: message, message_reference: { message_id: repliedMessageId }, tts: !!tts, ...body }, 'POST'),
+    editMessage: (channelOrMessageThreadId, messageId, newMessage, body = {}) => apiCall(`/channels/${channelOrMessageThreadId}/messages/${messageId}`, { content: newMessage, ...body }, 'PATCH'),
+    deleteMessage: (channelOrMessageThreadId, messageId) => apiCall(`/channels/${channelOrMessageThreadId}/messages/${messageId}`, null, 'DELETE'),
+
+    createThread: (channelId, toOpenThreadInmessageId, name, body = {}) =>
+      apiCall(`/channels/${channelId}/messages/${toOpenThreadInmessageId}/threads`, { name, auto_archive_duration: 1440, location: 'Message', type: 11, ...body }, 'POST'),
 
     // Use this generator: https://discord.club/dashboard
     // Click `+` at the bottom in the embed section then copy the `embed` key in the JSON output.
-    sendEmbed: (channelId, embed = { title: 'Title', description: 'Description' }) => apiCall(`/channels/${channelId}/messages`, { embed }, 'POST'),
+    sendEmbed: (channelOrMessageThreadId, embed = { title: 'Title', description: 'Description' }) => apiCall(`/channels/${channelOrMessageThreadId}/messages`, { embed }, 'POST'),
 
     auditLog: guildId => apiCall(`/guilds/${guildId}/audit-logs`),
 
@@ -80,11 +85,11 @@
     editCurrentUser: (username, avatar) => apiCall('/users/@me', { username, avatar }, 'PATCH'),
     listCurrentUserGuilds: () => apiCall('/users/@me/guilds'),
 
-    listReactions: (channelId, messageId, emojiUrl) => apiCall(`/channels/${channelId}/messages/${messageId}/reactions/${emojiUrl}/@me`),
-    addReaction: (channelId, messageId, emojiUrl) => apiCall(`/channels/${channelId}/messages/${messageId}/reactions/${emojiUrl}/@me`, null, 'PUT'),
-    deleteReaction: (channelId, messageId, emojiUrl) => apiCall(`/channels/${channelId}/messages/${messageId}/reactions/${emojiUrl}/@me`, null, 'DELETE'),
+    listReactions: (channelOrMessageThreadId, messageId, emojiUrl) => apiCall(`/channels/${channelOrMessageThreadId}/messages/${messageId}/reactions/${emojiUrl}/@me`),
+    addReaction: (channelOrMessageThreadId, messageId, emojiUrl) => apiCall(`/channels/${channelOrMessageThreadId}/messages/${messageId}/reactions/${emojiUrl}/@me`, null, 'PUT'),
+    deleteReaction: (channelOrMessageThreadId, messageId, emojiUrl) => apiCall(`/channels/${channelOrMessageThreadId}/messages/${messageId}/reactions/${emojiUrl}/@me`, null, 'DELETE'),
 
-    typing: channelId => apiCall(`/channels/${channelId}/typing`, null, 'POST'),
+    typing: channelOrMessageThreadId => apiCall(`/channels/${channelOrMessageThreadId}/typing`, null, 'POST'),
 
     delay,
     apiCall
