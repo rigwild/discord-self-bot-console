@@ -89,9 +89,13 @@ This specific script only works for user accounts. If you want to use a bot acco
 
 [Why can't I use a bot account with the Discord client?](https://github.com/rigwild/discord-self-bot-console/discussions/4#discussioncomment-1999680)
 
-## List all usable emojis
+## List all custom emojis urls from all guilds you are a member of
 
-See [List of all emoji url's you have access to](https://github.com/rigwild/discord-self-bot-console/discussions/2)
+See [How to list all custom emojis urls from all guilds you are a member of](https://github.com/rigwild/discord-self-bot-console/discussions/2)
+
+## React with emoji or custom emoji
+
+See [How to react with emoji or custom emoji ? 🤔](https://github.com/rigwild/discord-self-bot-console/discussions/23)
 
 ## Open a thread
 
@@ -134,6 +138,8 @@ You can use `loop = false` at any time to stop it.
   }
 }
 ```
+
+To farm XP with multiple accounts, check [Is it possible to farm XP using multiple tokens?](https://github.com/rigwild/discord-self-bot-console/discussions/21#discussioncomment-3136195)
 
 ## Clear messages of user
 
