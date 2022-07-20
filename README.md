@@ -9,7 +9,10 @@ Automating user accounts is against [Discord's Terms of Service](https://discord
 # Usage
 
 1. Close Discord client (`Quit Discord` in system tray)
-2. Open the file at `%appdata%\discord\settings.json` in Windows or `~/.config/discord/settings.json` in Linux
+2. Open the settings file, it's location depends on your OS:
+   - Windows: `%appdata%\discord\settings.json`
+   - macOS: `~/Library/Application Support/Discord/settings.json`
+   - Linux: `~/.config/discord/settings.json`
 3. Add `"DANGEROUS_ENABLE_DEVTOOLS_ONLY_ENABLE_IF_YOU_KNOW_WHAT_YOURE_DOING": true,` (this is necessary [since last update](https://www.reddit.com/r/discordapp/comments/sc61n3/comment/hu4fw5x))
 4. Save the file
 5. Restart Discord client
