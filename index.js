@@ -7,11 +7,11 @@
     os: 'Windows',
     browser: 'Discord Client',
     release_channel: 'stable',
-    client_version: '1.0.9005',
+    client_version: '1.0.9006',
     os_version: '10.0.22000',
     os_arch: 'x64',
     system_locale: 'en-US',
-    client_build_number: 133852,
+    client_build_number: 142868,
     client_event_source: null
   }
 
