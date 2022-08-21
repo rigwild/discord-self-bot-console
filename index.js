@@ -15,20 +15,26 @@
     client_event_source: null
   }
 
-  const apiCall = (apiPath, body, method = 'GET') => {
+  const apiCall = (apiPath, body, method = 'GET', options = {}) => {
     if (!authHeader) throw new Error("The authorization token is missing. Did you forget to set it? `authHeader = 'your_token'`")
-    return fetch(`https://discord.com/api/v9${apiPath}`, {
-      body: body ? JSON.stringify(body) : undefined,
+    const fetchOptions = {
+      body: body ? body : undefined,
       method,
       headers: {
         Accept: '*/*',
         'Accept-Language': 'en-US',
         Authorization: authHeader,
-        'Content-Type': 'application/json',
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) discord/1.0.9005 Chrome/91.0.4472.164 Electron/13.6.6 Safari/537.36',
-        'S-Super-Properties': btoa(JSON.stringify(xSuperPropertiesObj))
-      }
-    })
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) discord/1.0.9006 Chrome/91.0.4472.164 Electron/13.6.6 Safari/537.36',
+        'X-Super-Properties': btoa(JSON.stringify(xSuperPropertiesObj))
+      },
+      ...options
+    }
+    const isFormData = body?.constructor?.name === 'FormData'
+    if (!isFormData) {
+      fetchOptions.headers['Content-Type'] = 'application/json'
+      fetchOptions.body = JSON.stringify(body)
+    }
+    return fetch(`https://discord.com/api/v9${apiPath}`, fetchOptions)
       .then(res => res.json().catch(() => {}))
       .catch(console.error)
   }
@@ -49,6 +55,7 @@
 
     // Use this generator: https://discord.club/dashboard
     // Click `+` at the bottom in the embed section then copy the `embed` key in the JSON output.
+    // Does not work with user account anymore!
     sendEmbed: (channelOrThreadId, embed = { title: 'Title', description: 'Description' }) => apiCall(`/channels/${channelOrThreadId}/messages`, { embed }, 'POST'),
 
     auditLog: guildId => apiCall(`/guilds/${guildId}/audit-logs`),
@@ -78,6 +85,30 @@
     createEmoji: (guildId, name, image, roles) => apiCall(`/guilds/${guildId}`, { name, image, roles }, 'POST'),
     editEmoji: (guildId, emojiId, name, roles) => apiCall(`/guilds/${guildId}/${emojiId}`, { name, roles }, 'PATCH'),
     deleteEmoji: (guildId, emojiId) => apiCall(`/guilds/${guildId}/${emojiId}`, null, 'DELETE'),
+
+    searchSlashCommand: (channelOrThreadId, search) => apiCall(`/channels/${channelOrThreadId}/application-commands/search?type=1&query=${search}&limit=25&include_applications=true`),
+    sendSlashCommand: (guildId, channelOrThreadId, command, commandOptions = []) => {
+      const formData = new FormData()
+      formData.append(
+        'payload_json',
+        JSON.stringify({
+          type: 2,
+          application_id: command.application_id,
+          guild_id: guildId,
+          channel_id: channelOrThreadId,
+          session_id: 'requiredButUnchecked',
+          nonce: Math.floor(Math.random() * 1000000) + '',
+          data: {
+            ...command,
+            options: commandOptions,
+            application_command: {
+              ...command
+            }
+          }
+        })
+      )
+      return apiCall('/interactions', formData, 'POST')
+    },
 
     changeNick: (guildId, nick) => apiCall(`/guilds/${guildId}/members/@me/nick`, { nick }, 'PATCH'),
     leaveServer: guildId => apiCall(`/users/@me/guilds/${guildId}`, null, 'DELETE'),

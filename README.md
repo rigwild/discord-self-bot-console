@@ -97,6 +97,10 @@ See [How to list all custom emojis urls from all guilds you are a member of](htt
 
 See [How to react with emoji or custom emoji ? 🤔](https://github.com/rigwild/discord-self-bot-console/discussions/23)
 
+## Send slash commands (/something)
+
+See [Send slash commands (/something)](https://github.com/rigwild/discord-self-bot-console/discussions/31#discussioncomment-3442385)
+
 ## Open a thread
 
 ```js
@@ -272,6 +276,8 @@ Here is the full list of available functions, check [`index.js`](./index.js).
 - `api.createEmoji(guildId, name, image, roles)`
 - `api.editEmoji(guildId, emojiId, name, roles)`
 - `api.deleteEmoji(guildId, emojiId)`
+- `api.searchSlashCommand(channelOrThreadId, search)`
+- `api.sendSlashCommand(guildId, channelOrThreadId, command, commandOptions = [])`
 - `api.changeNick(guildId, nick)`
 - `api.leaveServer(guildId)`
 - `api.getDMs()`
