@@ -40,25 +40,23 @@
   }
 
   var api = {
-    getMessages: (channelOrThreadId, limit = 100, params = {}) => apiCall(`/channels/${channelOrThreadId}/messages?limit=${limit}&${qs(params)}`),
+    getMessages: (channelOrThreadId, limit = 100, params = {}) => apiCall(`/channels/${channelOrThreadId}/messages?limit=${limit ?? 100}&${qs(params)}`),
     sendMessage: (channelOrThreadId, message, tts, body = {}) => apiCall(`/channels/${channelOrThreadId}/messages`, { content: message, tts: !!tts, ...body }, 'POST'),
     replyToMessage: (channelOrThreadId, repliedMessageId, message, tts, body = {}) =>
       apiCall(`/channels/${channelOrThreadId}/messages`, { content: message, message_reference: { message_id: repliedMessageId }, tts: !!tts, ...body }, 'POST'),
     editMessage: (channelOrThreadId, messageId, newMessage, body = {}) => apiCall(`/channels/${channelOrThreadId}/messages/${messageId}`, { content: newMessage, ...body }, 'PATCH'),
     deleteMessage: (channelOrThreadId, messageId) => apiCall(`/channels/${channelOrThreadId}/messages/${messageId}`, null, 'DELETE'),
 
-    createThread: (channelId, toOpenThreadInmessageId, name, auto_archive_duration = 1440, body = {}) =>
-      apiCall(`/channels/${channelId}/messages/${toOpenThreadInmessageId}/threads`, { name, auto_archive_duration, location: 'Message', type: 11, ...body }, 'POST'),
-    createThreadWithoutMessage: (channelId, name, auto_archive_duration = 1440, body = {}) =>
-      apiCall(`/channels/${channelId}/threads`, { name, auto_archive_duration, location: 'Message', type: 11, ...body }, 'POST'),
+    createThread: (channelId, toOpenThreadInmessageId, name, autoArchiveDuration = 1440, body = {}) =>
+      apiCall(`/channels/${channelId}/messages/${toOpenThreadInmessageId}/threads`, { name, auto_archive_duration: autoArchiveDuration, location: 'Message', type: 11, ...body }, 'POST'),
+    createThreadWithoutMessage: (channelId, name, autoArchiveDuration = 1440, body = {}) =>
+      apiCall(`/channels/${channelId}/threads`, { name, auto_archive_duration: autoArchiveDuration, location: 'Message', type: 11, ...body }, 'POST'),
     deleteThread: threadId => apiCall(`/channels/${threadId}`, null, 'DELETE'),
 
     // Use this generator: https://discord.club/dashboard
     // Click `+` at the bottom in the embed section then copy the `embed` key in the JSON output.
     // Does not work with user account anymore!
     sendEmbed: (channelOrThreadId, embed = { title: 'Title', description: 'Description' }) => apiCall(`/channels/${channelOrThreadId}/messages`, { embed }, 'POST'),
-
-    auditLog: guildId => apiCall(`/guilds/${guildId}/audit-logs`),
 
     getRoles: guildId => apiCall(`/guilds/${guildId}/roles`),
     createRole: (guildId, name) => apiCall(`/guilds/${guildId}/roles`, { name }, 'POST'),
@@ -71,6 +69,8 @@
 
     addRole: (guildId, userId, roleId) => apiCall(`/guilds/${guildId}/members/${userId}/roles/${roleId}`, null, 'PUT'),
     removeRole: (guildId, userId, roleId) => apiCall(`/guilds/${guildId}/members/${userId}/roles/${roleId}`, null, 'DELETE'),
+
+    auditLogs: guildId => apiCall(`/guilds/${guildId}/audit-logs`),
 
     getChannels: guildId => apiCall(`/guilds/${guildId}/channels`),
     createChannel: (guildId, name, type) => apiCall(`/guilds/${guildId}/channels`, { name, type }, 'POST'),
@@ -120,6 +120,10 @@
     editCurrentUser: (username, bio, body = {}) => apiCall('/users/@me', { username: username ?? undefined, bio: bio ?? undefined, ...body }, 'PATCH'),
     listCurrentUserGuilds: () => apiCall('/users/@me/guilds'),
 
+    setCustomStatus: (emojiId, emojiName, expiresAt, text) =>
+      apiCall(`/users/@me/settings`, { custom_status: { emoji_id: emojiId, emoji_name: emojiName, expires_at: expiresAt, text: text } }, 'PATCH'),
+    deleteCustomStatus: () => apiCall(`/users/@me/settings`, { custom_status: { expires_at: new Date().toJSON() } }, 'PATCH'),
+
     listReactions: (channelOrThreadId, messageId, emojiUrl) => apiCall(`/channels/${channelOrThreadId}/messages/${messageId}/reactions/${emojiUrl}/@me`),
     addReaction: (channelOrThreadId, messageId, emojiUrl) => apiCall(`/channels/${channelOrThreadId}/messages/${messageId}/reactions/${emojiUrl}/@me`, null, 'PUT'),
     deleteReaction: (channelOrThreadId, messageId, emojiUrl) => apiCall(`/channels/${channelOrThreadId}/messages/${messageId}/reactions/${emojiUrl}/@me`, null, 'DELETE'),
@@ -156,8 +160,14 @@
   }
   id(false)
 
-  var authHeader = ''
-  var autoUpdateToken = true
+  // Do not replace configuration when reusing script in same context
+  if (!authHeader) {
+    //
+    // Set your authorization token here (or use the auto update, send a message in any chat!)
+    //
+    var authHeader = ''
+    var autoUpdateToken = true
+  }
 
   if (!XMLHttpRequest_setRequestHeader) {
     var XMLHttpRequest_setRequestHeader = XMLHttpRequest.prototype.setRequestHeader
@@ -166,7 +176,7 @@
   XMLHttpRequest.prototype.setRequestHeader = function () {
     if (autoUpdateToken && arguments[0] === 'Authorization' && authHeader !== arguments[1]) {
       authHeader = arguments[1]
-      console.log('Updated the Auth token!', authHeader)
+      console.log(`Updated the Auth token! <${authHeader.slice(0, 50)}...>`)
     }
     XMLHttpRequest_setRequestHeader.apply(this, arguments)
   }
