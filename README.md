@@ -171,7 +171,7 @@ Discord recently made its rate limiting strictier. I recommend 1100ms as a minim
   let deletionCount = 0
   var loop = true
   while (loop) {
-    const messages = await api.getMessages(channelId, { before: beforeMessageId })
+    const messages = await api.getMessages(channelId, 100, { before: beforeMessageId })
 
     // We reached the start of the conversation
     if (messages.length < 100 && messages.filter(x => x.author.id === userId && (x.type === 0 || x.type === 19)).length === 0) {
@@ -245,53 +245,73 @@ Initially, this was posted as [a gist for myself](https://gist.github.com/rigwil
 
 Here is the full list of available functions, check [`index.js`](./index.js).
 
-- `id()`
-- `delay(ms) `
-- `api.apiCall(apiPath, body, method = 'GET')`
-- `api.getMessages(channelOrThreadId, params = {})`
-- `api.sendMessage(channelOrThreadId, message, tts, body = {})`
-- `api.replyToMessage(channelOrThreadId, repliedMessageId, message, tts, body = {})`
-- `api.editMessage(channelOrThreadId, messageId, newMessage, body = {})`
-- `api.deleteMessage(channelOrThreadId, messageId)`
-- `api.createThread(channelId, toOpenThreadInmessageId, name, body = {})`
-- `api.createThreadWithoutMessage(channelId, name, body = {})`
-- `api.deleteThread(threadId)`
-- `api.sendEmbed(channelOrThreadId, embed = { title: 'Title', description: 'Description' })`
-  - See [How to send an embed?](https://github.com/rigwild/discord-self-bot-console/discussions/6) - Use this [embed generator](https://discord.club/dashboard)
-- `api.auditLog(guildId)`
-- `api.getRoles(guildId)`
-- `api.createRole(guildId, name)`
-- `api.deleteRole(guildId, roleId)`
-- `api.getBans(guildId)`
-- `api.banUser(guildId, userId, reason)`
-- `api.unbanUser(guildId, userId)`
-- `api.kickUser(guildId, userId)`
-- `api.addRole(guildId, userId, roleId)`
-- `api.removeRole(guildId, userId, roleId)`
-- `api.getChannels(guildId)`
-- `api.createChannel(guildId, name, type)`
-- `api.deleteChannel(channelId)`
-- `api.pinnedMessages(channelId)`
-- `api.addPin(channelId, messageId)`
-- `api.deletePin(channelId, messageId)`
-- `api.listEmojis(guildId)`
-- `api.getEmoji(guildId, emojiId)`
-- `api.createEmoji(guildId, name, image, roles)`
-- `api.editEmoji(guildId, emojiId, name, roles)`
-- `api.deleteEmoji(guildId, emojiId)`
-- `api.searchSlashCommand(channelOrThreadId, search)`
-- `api.sendSlashCommand(guildId, channelOrThreadId, command, commandOptions = [])`
-- `api.changeNick(guildId, nick)`
-- `api.leaveServer(guildId)`
-- `api.getDMs()`
-- `api.getUser(userId)`
-- `api.getCurrentUser()`
-- `api.editCurrentUser(username?, bio?, body = {})`
-- `api.listCurrentUserGuilds()`
-- `api.listReactions(channelOrThreadId, messageId, emojiUrl)`
-- `api.addReaction(channelOrThreadId, messageId, emojiUrl)`
-- `api.deleteReaction(channelOrThreadId, messageId, emojiUrl)`
-- `api.typing(channelOrThreadId)`
+```js
+id()
+delay(ms)
+api.apiCall(apiPath, body, method = 'GET')
+
+api.getMessages(channelOrThreadId, limit?, params = {})
+api.sendMessage(channelOrThreadId, message, tts?, body = {})
+api.replyToMessage(channelOrThreadId, repliedMessageId, message, tts?, body = {})
+api.editMessage(channelOrThreadId, messageId, newMessage, body = {})
+api.deleteMessage(channelOrThreadId, messageId)
+
+api.createThread(channelId, toOpenThreadInmessageId, name, autoArchiveDuration?, body = {})
+api.createThreadWithoutMessage(channelId, name, autoArchiveDuration?, body = {})
+api.deleteThread(threadId)
+
+api.sendEmbed(channelOrThreadId, embed = { title: 'Title', description: 'Description' })
+
+api.getRoles(guildId)
+api.createRole(guildId, name)
+api.deleteRole(guildId, roleId)
+
+api.getBans(guildId)
+api.banUser(guildId, userId, reason)
+api.unbanUser(guildId, userId)
+api.kickUser(guildId, userId)
+
+api.addRole(guildId, userId, roleId)
+api.removeRole(guildId, userId, roleId)
+
+api.auditLogs(guildId)
+
+api.getChannels(guildId)
+api.createChannel(guildId, name, type)
+api.deleteChannel(channelId)
+
+api.pinnedMessages(channelId)
+api.addPin(channelId, messageId)
+api.deletePin(channelId, messageId)
+
+api.listEmojis(guildId)
+api.getEmoji(guildId, emojiId)
+api.createEmoji(guildId, name, image, roles)
+api.editEmoji(guildId, emojiId, name, roles)
+api.deleteEmoji(guildId, emojiId)
+
+api.searchSlashCommand(channelOrThreadId, search)
+api.sendSlashCommand(guildId, channelOrThreadId, command, commandOptions = [])
+
+api.changeNick(guildId, nick)
+api.leaveServer(guildId)
+
+api.getDMs()
+api.getUser(userId)
+
+api.getCurrentUser()
+api.editCurrentUser(username?, bio?, body = {})
+api.listCurrentUserGuilds()
+
+api.setCustomStatus(emojiId?, emojiName?, expiresAt?, text?)
+api.deleteCustomStatus()
+
+api.listReactions(channelOrThreadId, messageId, emojiUrl)
+api.addReaction(channelOrThreadId, messageId, emojiUrl)
+api.deleteReaction(channelOrThreadId, messageId, emojiUrl)
+
+api.typing(channelOrThreadId)
+```
 
 ## `delay(ms)`
 
