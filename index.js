@@ -117,7 +117,7 @@
     getUser: userId => apiCall(`/users/${userId}`),
 
     getCurrentUser: () => apiCall('/users/@me'),
-    editCurrentUser: (username, avatar) => apiCall('/users/@me', { username, avatar }, 'PATCH'),
+    editCurrentUser: (username, bio, body = {}) => apiCall('/users/@me', { username: username ?? undefined, bio: bio ?? undefined, ...body }, 'PATCH'),
     listCurrentUserGuilds: () => apiCall('/users/@me/guilds'),
 
     listReactions: (channelOrThreadId, messageId, emojiUrl) => apiCall(`/channels/${channelOrThreadId}/messages/${messageId}/reactions/${emojiUrl}/@me`),

@@ -286,7 +286,7 @@ Here is the full list of available functions, check [`index.js`](./index.js).
 - `api.getDMs()`
 - `api.getUser(userId)`
 - `api.getCurrentUser()`
-- `api.editCurrentUser(username, avatar)`
+- `api.editCurrentUser(username?, bio?, body = {})`
 - `api.listCurrentUserGuilds()`
 - `api.listReactions(channelOrThreadId, messageId, emojiUrl)`
 - `api.addReaction(channelOrThreadId, messageId, emojiUrl)`
