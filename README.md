@@ -74,17 +74,17 @@ Update `cid` to the channel you are watching, get the last 100 messages, send a 
 
 **SENDING EMBEDS AS A USER ACCOUNT IS NOT POSSIBLE ANYMORE, DISCORD UPDATED ITS API (see [this reddit post](https://web.archive.org/web/20220209223900/https://www.reddit.com/r/Discord_selfbots/comments/sa0hc2/discord_embeds_patched/))**
 
-See [How to send an embed?](https://github.com/rigwild/discord-self-bot-console/discussions/6)
+See [How to send an embed?](https://github.com/rigwild/discord-self-bot-console/discussions/6#discussioncomment-1779730)
 
 ![embed example](https://user-images.githubusercontent.com/26366184/145406696-8734410a-fc08-40e3-abf8-de12d8d89db9.png)
 
 ## Run in Node.js
 
-See [Can I run it without opening Discord?](https://github.com/rigwild/discord-self-bot-console/discussions/4)
+See [Can I run it without opening Discord?](https://github.com/rigwild/discord-self-bot-console/discussions/4#discussioncomment-1438231)
 
 ## Use multiple account tokens
 
-See [Is it possible to use multiple tokens?](https://github.com/rigwild/discord-self-bot-console/discussions/21)
+See [Is it possible to use multiple tokens?](https://github.com/rigwild/discord-self-bot-console/discussions/21#discussioncomment-3048097)
 
 ## Use a bot account
 
@@ -94,15 +94,19 @@ This specific script only works for user accounts. If you want to use a bot acco
 
 ## List all custom emojis urls from all guilds you are a member of
 
-See [How to list all custom emojis urls from all guilds you are a member of](https://github.com/rigwild/discord-self-bot-console/discussions/2)
+See [How to list all custom emojis urls from all guilds you are a member of](https://github.com/rigwild/discord-self-bot-console/discussions/2#discussioncomment-986874)
 
 ## React with emoji or custom emoji
 
-See [How to react with emoji or custom emoji ? 🤔](https://github.com/rigwild/discord-self-bot-console/discussions/23)
+See [How to react with emoji or custom emoji ? 🤔](https://github.com/rigwild/discord-self-bot-console/discussions/23#discussioncomment-3135937)
 
 ## Send slash commands (/something)
 
 See [Send slash commands (/something)](https://github.com/rigwild/discord-self-bot-console/discussions/31#discussioncomment-3442385)
+
+## Add and remove reactions to every message on a channel
+
+See [Add and remove reactions to every message on a channel](https://github.com/rigwild/discord-self-bot-console/discussions/32#discussioncomment-3620234)
 
 ## Open a thread
 
@@ -166,7 +170,7 @@ Discord recently made its rate limiting strictier. I recommend 1100ms as a minim
   let amount = 99999999
   let delayMs = 1100
 
-  let beforeMessageId = '999999999999999999' // Leave it like this to delete from latest
+  let beforeMessageId = '8999999999999999999' // Leave it like this to delete from latest
 
   let deletionCount = 0
   var loop = true
@@ -202,6 +206,90 @@ Discord recently made its rate limiting strictier. I recommend 1100ms as a minim
         deletionCount++
         console.log(`[${deletionCount}/${amount}] Deleted a message!`)
         if (deletionCount < amount) await delay(delayMs)
+      }
+    }
+    await delay(delayMs)
+  }
+}
+```
+
+## Do anything to every messages in a text channel
+
+Pass your custom function!
+
+This example will apply all reactions already there on all messages, then add 👋 if message says `hi!!` or `hello`.
+
+```js
+{
+  id()
+  let channelId = cid
+  let amount = 99999999
+  let delayMs = 500
+
+  let actionFn = async (channelId, message) => {
+    //
+    // Your custom code here
+    //
+    let wasActiontriggered = false
+
+    // Copy all reactions already present on message
+    for (const reaction of message.reactions || []) {
+      let reactionToAdd = reaction.emoji.id ? `${reaction.emoji.name}:${reaction.emoji.id}` : reaction.emoji.name
+      await api.addReaction(channelId, message.id, reactionToAdd)
+      wasActiontriggered = true
+      await delay(delayMs)
+    }
+
+    // If person said `hello!!!` or `hi!`, react with waving hand 👋
+    if (message.content.match(/^(?:hi|hello)!*$/)) {
+      await api.addReaction(channelId, message.id, '👋')
+      wasActiontriggered = true
+    }
+
+    // Return a boolean indicating if you did something to the message
+    // If true, will log and apply delay
+    return wasActiontriggered
+  }
+
+  let beforeMessageId = '8999999999999999999' // Leave it like this to react from latest
+
+  let count = 0
+  var loop = true
+  while (loop) {
+    const messages = await api.getMessages(channelId, 100, { before: beforeMessageId })
+
+    // We reached the start of the conversation
+    if (messages.length < 100 && messages.filter(x => x.type === 0 || x.type === 19).length === 0) {
+      loop = false
+      console.log(`[${count}/${amount}] Reached the start of the conversation! Ending.`)
+      continue
+    }
+
+    // Update last message snowflake for next iteration
+    beforeMessageId = messages[0].id
+
+    for (const aMessage of messages) {
+      if (loop === false) break
+
+      // Check if the max amount was reached
+      if (count >= amount) {
+        loop = false
+        console.log(`[${count}/${amount}] Treated the requested amount of messages! Ending.`)
+        break
+      }
+
+      // Update last message snowflake for next iteration
+      beforeMessageId = aMessage.id
+
+      // Check if the message should be reacted
+      if (aMessage.type === 0 || aMessage.type === 19) {
+        let wasActiontriggered = await actionFn(channelId, aMessage)
+        // Apply delay and log only if return true
+        if (wasActiontriggered) {
+          count++
+          console.log(`[${count}/${amount}] Treated a message! ID=${aMessage.id}`)
+          if (count < amount) await delay(delayMs)
+        }
       }
     }
     await delay(delayMs)
