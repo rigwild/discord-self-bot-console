@@ -112,6 +112,7 @@
 
     changeNick: (guildId, nick) => apiCall(`/guilds/${guildId}/members/@me/nick`, { nick }, 'PATCH'),
     leaveServer: guildId => apiCall(`/users/@me/guilds/${guildId}`, null, 'DELETE'),
+    listServers: () => apiCall(`/users/@me/guilds`)
 
     getDMs: () => apiCall(`/users/@me/channels`),
     getUser: userId => apiCall(`/users/${userId}`),
