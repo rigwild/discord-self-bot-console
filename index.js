@@ -75,6 +75,7 @@
     getChannels: guildId => apiCall(`/guilds/${guildId}/channels`),
     createChannel: (guildId, name, type) => apiCall(`/guilds/${guildId}/channels`, { name, type }, 'POST'),
     deleteChannel: channelId => apiCall(`/channels/${channelId}`, null, 'DELETE'),
+    getChannel: channelOrThreadId => apiCall(`/channels/${channelOrThreadId}`),
 
     pinnedMessages: channelId => apiCall(`/channels/${channelId}/pins`),
     addPin: (channelId, messageId) => apiCall(`/channels/${channelId}/pins/${messageId}`, null, 'PUT'),
