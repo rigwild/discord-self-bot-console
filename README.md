@@ -70,6 +70,18 @@ Update `cid` to the channel you are watching, get the last 100 messages, send a 
 }
 ```
 
+
+Update `cid` to the channel you are watching then get channels in guild.
+
+```js
+{
+  id()
+
+  let messages = await api.getChannels(gid)
+  console.log(messages)
+}
+```
+
 ## Send an embed
 
 **SENDING EMBEDS AS A USER ACCOUNT IS NOT POSSIBLE ANYMORE, DISCORD UPDATED ITS API (see [this reddit post](https://web.archive.org/web/20220209223900/https://www.reddit.com/r/Discord_selfbots/comments/sa0hc2/discord_embeds_patched/))**
