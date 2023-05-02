@@ -115,6 +115,7 @@
     leaveServer: guildId => apiCall(`/users/@me/guilds/${guildId}`, null, 'DELETE'),
 
     getDMs: () => apiCall(`/users/@me/channels`),
+    getServers: () => apiCall(`/users/@me/guilds`),
     getUser: userId => apiCall(`/users/${userId}`),
 
     getCurrentUser: () => apiCall('/users/@me'),
