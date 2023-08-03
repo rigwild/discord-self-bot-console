@@ -1,3 +1,5 @@
+/// <reference path="./index.js" />
+
 export interface RequestOptions {
   method?: string
   headers?: { [key: string]: string }
@@ -90,11 +92,9 @@ export interface Guild {
   // ...
 }
 
-e
-
 export type api = {
   getMessages(channelOrThreadId: string, limit?: number, params?: any): Promise<Message[]>
-  sendMessage(channelOrThreadId: string, message: string, tts: boolean, body?: any): Promise<Message>
+  sendMessage(channelOrThreadId: string, message: string, tts?: boolean, body?: any): Promise<Message>
   replyToMessage(channelOrThreadId: string, repliedMessageId: string, message: string, tts: boolean, body?: any): Promise<Message>
   editMessage(channelOrThreadId: string, messageId: string, newMessage: string, body?: any): Promise<Message>
   deleteMessage(channelOrThreadId: string, messageId: string): Promise<any>
@@ -140,12 +140,15 @@ export type api = {
   changeNick(guildId: string, nick: string): Promise<void>
   leaveServer(guildId: string): Promise<void>
 
+  getServers(): Promise<Guild[]>
+  getGuilds(): Promise<Guild[]>
+  listCurrentUserGuilds(): Promise<Guild[]>
+
   getDMs(): Promise<any>
   getUser(userId: string): Promise<User>
 
   getCurrentUser(): Promise<User>
   editCurrentUser(username?: string, bio?: string, body?: any): Promise<User>
-  listCurrentUserGuilds(): Promise<Guild[]>
 
   setCustomStatus(emojiId: string, emojiName: string, expiresAt: string, text: string): Promise<void>
   deleteCustomStatus(): Promise<void>
@@ -159,5 +162,22 @@ export type api = {
   delay(ms: number): Promise<void>
   apiCall<T>(apiPath: string, body?: any, method?: string, options?: RequestOptions): Promise<T>
   id(log?: boolean): void
-  getConfig(): Readonly<{ authHeader: string; autoUpdateToken: boolean; gid: string; cid: string }>
+  update_guildId_and_channelId_withCurrentlyVisible(log?: boolean): void
+  getConfig(): Readonly<{
+    authHeader: string
+    autoUpdateToken: boolean
+    gid: string
+    /** Alias for `gid` */
+    guildId: string
+    cid: string
+    /** Alias for `cid` */
+    channelId: string
+  }>
+  setConfigAuthHeader(token: string): void
+
+  setConfigAutoUpdateToken: (autoUpdateToken: boolean) => void
+  setConfigGid: (guildId: string) => void
+  setConfigGuildId: (guildId: string) => void
+  setConfigCid: (channelId: string) => void
+  setConfigChannelId: (channelId: string) => void
 }

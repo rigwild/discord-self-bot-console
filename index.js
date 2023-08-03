@@ -8,7 +8,7 @@
   var autoUpdateToken = undefined // Should the token be updated automatically when a request with the token is intercepted?
 
   // Call this to update `cid` and `gid` to current channel and guild id
-  var id = (log = true) => {
+  var update_guildId_and_channelId_withCurrentlyVisible = (log = true) => {
     gid = window.location.href.split('/').slice(4)[0]
     cid = window.location.href.split('/').slice(4)[1]
     if (log) {
@@ -16,6 +16,7 @@
       console.log(`\`cid\` was set to the channel id you are currently looking at (${cid})`)
     }
   }
+  var id = update_guildId_and_channelId_withCurrentlyVisible
 
   /** @type {import('./types').api['delay']} */
   var delay = ms => new Promise(res => setTimeout(res, ms))
@@ -141,7 +142,7 @@
 
     getServers: () => apiCall(`/users/@me/guilds`),
     getGuilds: () => apiCall(`/users/@me/guilds`),
-    listCurrentUserGuilds: () => apiCall('/users/@me/guilds'), // stay backward-compatible
+    listCurrentUserGuilds: () => apiCall('/users/@me/guilds'),
 
     getDMs: () => apiCall(`/users/@me/channels`),
     getUser: userId => apiCall(`/users/${userId}`),
@@ -162,7 +163,14 @@
     delay,
     apiCall,
     id,
-    getConfig: () => Object.freeze({ authHeader, autoUpdateToken, gid, cid }),
+    update_guildId_and_channelId_withCurrentlyVisible,
+    getConfig: () => Object.freeze({ authHeader, autoUpdateToken, guildId: gid, channelId: cid, gid, cid }),
+    setConfigAuthHeader: token => (authHeader = token),
+    setConfigAutoUpdateToken: bool => (autoUpdateToken = bool),
+    setConfigGid: id => (gid = id),
+    setConfigGuildId: id => (gid = id),
+    setConfigCid: id => (cid = id),
+    setConfigChannelId: id => (cid = id),
   }
 
   console.log('\n\n\n\nSelfbot loaded! Use it like this: `await api.someFunction()`')
@@ -197,7 +205,7 @@
   XMLHttpRequest.prototype.setRequestHeader = function () {
     if (autoUpdateToken && arguments[0] === 'Authorization' && authHeader !== arguments[1]) {
       authHeader = arguments[1]
-      console.log(`Updated the Auth token! <${authHeader.slice(0, 50)}...>`)
+      console.log(`Updated the Auth token! <${authHeader.slice(0, 30)}...>`)
     }
     XMLHttpRequest_setRequestHeader.apply(this, arguments)
   }
@@ -207,5 +215,5 @@
     // @ts-ignore
     var module = {}
   }
-  module.exports = { api }
+  module.exports = { api, id, delay, update_guildId_and_channelId_withCurrentlyVisible }
 }

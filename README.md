@@ -34,7 +34,7 @@ If you want to disable the token from being automatically set, use `autoUpdateTo
 
 You can now use any function provided by this script in the console like `await api.someFunction()`. Don't forget `await` or the server's response will not be printed to the console.
 
-Use the `id()` function to update the variable `gid` guild id and `cid` channel id to what you are currently watching.
+Use the `api.id()` function to update the variable `gid` guild id and `cid` channel id to what you are currently watching.
 
 **Note:** It's a good idea to wrap your code in its own scope `{ code }` or you might get an error when reusing the same variable names later!
 
@@ -46,25 +46,28 @@ Update `cid` to the channel you are watching, get the last 100 messages, send a 
 
 ```js
 {
-  id()
+  api.id()
+  // or api.update_guildId_and_channelId_withCurrentlyVisible()
+
   let channelId = cid
+  // or let channelId = api.getConfig().channelId
 
   // Send a message
-  let sentMessage = await api.sendMessage(channelId, 'Hello!')
+  let sentMessage = await api.sendMessage(channelId, `Hello! 👋 My name is ${user.username}!`)
 
-  await delay(2000)
+  await api.delay(2000)
 
   // Edit a message
-  let editedMessage = await api.editMessage(channelId, sentMessage.id, 'Hello, edited!')
+  let editedMessage = await api.editMessage(channelId, sentMessage.id, 'Hello, edited! ✌️')
 
-  await delay(2000)
+  await api.delay(2000)
 
   // Delete a message
   await api.deleteMessage(channelId, editedMessage.id)
 
-  await delay(2000)
+  await api.delay(2000)
 
-  // Log the last 100 messages
+  // Log the last 100 messages in the console
   let messages = await api.getMessages(channelId)
   console.log(messages)
 }
@@ -84,14 +87,16 @@ git clone git@github.com:rigwild/discord-self-bot-console.git
 git clone https://github.com/rigwild/discord-self-bot-console.git
 
 cd discord-self-bot-console
-touch myScript.js
+code .
 ```
 
-Doing the following, you should be able to get typings.
+Doing the following, you should be able to get typings. Open [`myScripts/example.js`](./myScript/example.js).
 
 ```js
-// myScript.js
-const { api } = require('./index.js')
+// myscripts/example.js
+
+// @ts-check
+const { api } = require('../index.js')
 
 // Copy paste the below code inside the Discord console
 ;(async () => {
@@ -143,7 +148,7 @@ See [Add and remove reactions to every message on a channel](https://github.com/
 
 ```js
 {
-  id()
+  api.id()
   let channelId = cid
 
   const sentMessage = await api.sendMessage(channelId, 'Hello, please open a thread here! 💕')
@@ -166,7 +171,7 @@ You can use `loop = false` at any time to stop it.
 
 ```js
 {
-  id()
+  api.id()
   let channelId = cid
   let message = 'Hi, I like spamming 🦜'
 
@@ -176,7 +181,7 @@ You can use `loop = false` at any time to stop it.
     const sentMessage = await api.sendMessage(channelId, message)
     await api.deleteMessage(channelId, sentMessage.id)
     console.log(`Sent ${++count} messages`)
-    await delay(61000) // 61 seconds
+    await api.delay(61000) // 61 seconds
   }
 }
 ```
@@ -195,7 +200,7 @@ Discord recently made its rate limiting strictier. I recommend 1100ms as a minim
 
 ```js
 {
-  id()
+  api.id()
   let channelId = cid
   let userId = '012345678987654321'
   let amount = 99999999
@@ -236,10 +241,10 @@ Discord recently made its rate limiting strictier. I recommend 1100ms as a minim
         await api.deleteMessage(channelId, aMessage.id)
         deletionCount++
         console.log(`[${deletionCount}/${amount}] Deleted a message!`)
-        if (deletionCount < amount) await delay(delayMs)
+        if (deletionCount < amount) await api.delay(delayMs)
       }
     }
-    await delay(delayMs)
+    await api.delay(delayMs)
   }
 }
 ```
@@ -252,7 +257,7 @@ This example will apply all reactions already there on all messages, then add �
 
 ```js
 {
-  id()
+  api.id()
   let channelId = cid
   let amount = 99999999
   let delayMs = 500
@@ -268,7 +273,7 @@ This example will apply all reactions already there on all messages, then add �
       let reactionToAdd = reaction.emoji.id ? `${reaction.emoji.name}:${reaction.emoji.id}` : reaction.emoji.name
       await api.addReaction(channelId, message.id, reactionToAdd)
       wasActiontriggered = true
-      await delay(delayMs)
+      await api.delay(delayMs)
     }
 
     // If person said `hello!!!` or `hi!`, react with waving hand 👋
@@ -319,11 +324,11 @@ This example will apply all reactions already there on all messages, then add �
         if (wasActiontriggered) {
           count++
           console.log(`[${count}/${amount}] Treated a message! ID=${aMessage.id}`)
-          if (count < amount) await delay(delayMs)
+          if (count < amount) await api.delay(delayMs)
         }
       }
     }
-    await delay(delayMs)
+    await api.delay(delayMs)
   }
 }
 ```
@@ -362,11 +367,12 @@ Initially, this was posted as [a gist for myself](https://gist.github.com/rigwil
 
 ## Full list
 
-Here is the full list of available functions, check [`index.js`](./index.js) and [`types.d.ts`](./types.d.ts) for more details.
+The full list of available functions is available in [`types.d.ts`](./types.d.ts).
 
 ```js
-id()
-delay(ms)
+api.id()
+api.update_guildId_and_channelId_withCurrentlyVisible()
+api.delay(ms)
 api.apiCall(apiPath, body, method = 'GET')
 
 api.getMessages(channelOrThreadId, limit?, params = {})
@@ -376,65 +382,15 @@ api.editMessage(channelOrThreadId, messageId, newMessage, body = {})
 api.deleteMessage(channelOrThreadId, messageId)
 
 api.createThread(channelId, toOpenThreadInmessageId, name, autoArchiveDuration?, body = {})
-api.createThreadWithoutMessage(channelId, name, autoArchiveDuration?, body = {})
-api.deleteThread(threadId)
-
-api.sendEmbed(channelOrThreadId, embed = { title: 'Title', description: 'Description' })
-
-api.getRoles(guildId)
-api.createRole(guildId, name)
-api.deleteRole(guildId, roleId)
-
-api.getBans(guildId)
-api.banUser(guildId, userId, reason)
-api.unbanUser(guildId, userId)
-api.kickUser(guildId, userId)
-
-api.addRole(guildId, userId, roleId)
-api.removeRole(guildId, userId, roleId)
-
-api.auditLogs(guildId)
-
-api.getChannels(guildId)
-api.createChannel(guildId, name, type)
-api.deleteChannel(channelId)
-
-api.pinnedMessages(channelId)
-api.addPin(channelId, messageId)
-api.deletePin(channelId, messageId)
-
-api.listEmojis(guildId)
-api.getEmoji(guildId, emojiId)
-api.createEmoji(guildId, name, image, roles)
-api.editEmoji(guildId, emojiId, name, roles)
-api.deleteEmoji(guildId, emojiId)
-
-api.searchSlashCommand(channelOrThreadId, search)
-api.sendSlashCommand(guildId, channelOrThreadId, command, commandOptions = [])
-
-api.changeNick(guildId, nick)
-api.leaveServer(guildId)
-
-api.getDMs()
-api.getUser(userId)
 
 api.getCurrentUser()
 api.editCurrentUser(username?, bio?, body = {})
-api.listCurrentUserGuilds()
-
-api.setCustomStatus(emojiId?, emojiName?, expiresAt?, text?)
-api.deleteCustomStatus()
-
-api.listReactions(channelOrThreadId, messageId, emojiUrl)
-api.addReaction(channelOrThreadId, messageId, emojiUrl)
-api.deleteReaction(channelOrThreadId, messageId, emojiUrl)
-
-api.typing(channelOrThreadId)
+// and more...
 ```
 
-## `delay(ms)`
+## `api.delay(ms)`
 
-`delay(ms: number) => Promise<void>`
+`api.delay(ms: number) => Promise<void>`
 
 Wait for `ms` milliseconds.
 
@@ -443,9 +399,11 @@ await delay(1500)
 await api.delay(1500)
 ```
 
-## `id()`
+## `api.id()`
 
-`id() => void`
+`api.id() => void` (old alias)
+
+`api.update_guildId_and_channelId_withCurrentlyVisible() => void`
 
 Update the variable `gid` guild id and `cid` channel id to what you are currently watching in the Discord client.
 
@@ -454,22 +412,37 @@ id()
 api.id()
 ```
 
-## `getConfig()`
+## `api.getConfig()`
 
-`id() => { authHeader: string; autoUpdateToken: boolean; gid: string; cid: string }`
+```ts
+api.getConfig(): Readonly<{
+  authHeader: string,
+  autoUpdateToken: boolean,
+  guildId: string,
+  channelId: string,
+  gid: string,
+  cid: string,
+}>
+```
 
-Returns the current configuration, read-only. Useful if you want to do some advanced stuff.
+Returns the current configuration, read-only. Useful if you want to use typings in your IDE.
 
-```js
-api.getConfig()
+Set configuration
+
+```
+api.setConfigAutoUpdateToken(autoUpdateToken: boolean): void
+api.setConfigGid(guildId: string): void
+api.setConfigGuildId(guildId: string): void
+api.setConfigCid(channelId: string): void
+api.setConfigChannelId(channelId: string): void
 ```
 
 ## Variables
 
 - `authHeader`: You Discord account auth token
 - `autoUpdateToken`: If true, the token will be automatically updated in the bot when a request is sent from the client (e.g sending a message)
-- `gid`: Current guild id (update to what you are currently watching using `id()`)
-- `cid`: Current channel id (update to what you are currently watching using `id()`)
+- `gid`: Current guild id (update to what you are currently watching using `api.id()`)
+- `cid`: Current channel id (update to what you are currently watching using `api.id()`)
 
 # License
 

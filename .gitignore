@@ -1,0 +1,5 @@
+node_modules
+dist
+myScripts/*
+!myScripts/example.js
+!myScripts/sendThenDelete.js
