@@ -139,12 +139,15 @@
     changeNick: (guildId, nick) => apiCall(`/guilds/${guildId}/members/@me/nick`, { nick }, 'PATCH'),
     leaveServer: guildId => apiCall(`/users/@me/guilds/${guildId}`, null, 'DELETE'),
 
+    getServers: () => apiCall(`/users/@me/guilds`),
+    getGuilds: () => apiCall(`/users/@me/guilds`),
+    listCurrentUserGuilds: () => apiCall('/users/@me/guilds'), // stay backward-compatible
+
     getDMs: () => apiCall(`/users/@me/channels`),
     getUser: userId => apiCall(`/users/${userId}`),
 
     getCurrentUser: () => apiCall('/users/@me'),
     editCurrentUser: (username, bio, body = {}) => apiCall('/users/@me', { username: username ?? undefined, bio: bio ?? undefined, ...body }, 'PATCH'),
-    listCurrentUserGuilds: () => apiCall('/users/@me/guilds'),
 
     setCustomStatus: (emojiId, emojiName, expiresAt, text) =>
       apiCall(`/users/@me/settings`, { custom_status: { emoji_id: emojiId, emoji_name: emojiName, expires_at: expiresAt, text: text } }, 'PATCH'),
