@@ -3,7 +3,6 @@ module.exports = {
   singleQuote: true,
   printWidth: 200,
   useTabs: false,
-  vueIndentScriptAndStyle: false,
-  trailingComma: 'none',
-  arrowParens: 'avoid'
+  trailingComma: 'all',
+  arrowParens: 'avoid',
 }

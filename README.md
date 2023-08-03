@@ -70,6 +70,37 @@ Update `cid` to the channel you are watching, get the last 100 messages, send a 
 }
 ```
 
+## Develop in IDE and get typings
+
+Types are provided at [`types.d.ts`](./types.d.ts). You can use them in your IDE to get typings and develop your script in a better environment. The typings are not fully complete, but it's better than nothing ([PRs are welcome!](https://github.com/rigwild/discord-self-bot-console/issues/60)).
+
+The script will not work with Node.js (and not supposed to be made for it), you need to copy/paste it in the Discord console to run it.
+
+Don't forget to paste the full [`index.js`](./index.js) script in the console first to get the `api` variable!
+
+```bash
+git clone git@github.com:rigwild/discord-self-bot-console.git
+# or
+git clone https://github.com/rigwild/discord-self-bot-console.git
+
+cd discord-self-bot-console
+touch myScript.js
+```
+
+Doing the following, you should be able to get typings.
+
+```js
+// myScript.js
+const { api } = require('./index.js')
+
+// Copy paste the below code inside the Discord console
+;(async () => {
+  const user = await api.getCurrentUser()
+
+  console.log(user.username)
+})()
+```
+
 ## Send an embed
 
 **SENDING EMBEDS AS A USER ACCOUNT IS NOT POSSIBLE ANYMORE, DISCORD UPDATED ITS API (see [this reddit post](https://web.archive.org/web/20220209223900/https://www.reddit.com/r/Discord_selfbots/comments/sa0hc2/discord_embeds_patched/))**
@@ -331,7 +362,7 @@ Initially, this was posted as [a gist for myself](https://gist.github.com/rigwil
 
 ## Full list
 
-Here is the full list of available functions, check [`index.js`](./index.js).
+Here is the full list of available functions, check [`index.js`](./index.js) and [`types.d.ts`](./types.d.ts) for more details.
 
 ```js
 id()
@@ -409,6 +440,7 @@ Wait for `ms` milliseconds.
 
 ```js
 await delay(1500)
+await api.delay(1500)
 ```
 
 ## `id()`
@@ -419,6 +451,17 @@ Update the variable `gid` guild id and `cid` channel id to what you are currentl
 
 ```js
 id()
+api.id()
+```
+
+## `getConfig()`
+
+`id() => { authHeader: string; autoUpdateToken: boolean; gid: string; cid: string }`
+
+Returns the current configuration, read-only. Useful if you want to do some advanced stuff.
+
+```js
+api.getConfig()
 ```
 
 ## Variables
