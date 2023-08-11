@@ -147,9 +147,10 @@ export type api = {
   getDMs(): Promise<any>
   getUser(userId: string): Promise<User>
 
-  getFriendInvite(): Promise<any>
+  getFriendInvites(): Promise<any>
   createFriendInvite(): Promise<any>
-  deleteFriendInvite(): Promise<any>
+  deleteFriendInvites(): Promise<any>
+  deleteFriendInvite(code: string): Promise<any>
 
   getCurrentUser(): Promise<User>
   editCurrentUser(username?: string, bio?: string, body?: any): Promise<User>
