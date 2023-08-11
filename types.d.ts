@@ -150,7 +150,6 @@ export type api = {
   getFriendInvites(): Promise<any>
   createFriendInvite(): Promise<any>
   deleteFriendInvites(): Promise<any>
-  deleteFriendInvite(code: string): Promise<any>
 
   getCurrentUser(): Promise<User>
   editCurrentUser(username?: string, bio?: string, body?: any): Promise<User>
