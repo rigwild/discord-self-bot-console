@@ -150,7 +150,6 @@
     getFriendInvites: () => apiCall(`/users/@me/invites`),
     createFriendInvite: () => apiCall(`/users/@me/invites`, null, 'POST'),
     deleteFriendInvites: () => apiCall(`/users/@me/invites`, null, 'DELETE'),
-	  deleteFriendInvite: (code) => apiCall(`/users/@me/invites`, code, 'DELETE'),
 
     getCurrentUser: () => apiCall('/users/@me'),
     editCurrentUser: (username, bio, body = {}) => apiCall('/users/@me', { username: username ?? undefined, bio: bio ?? undefined, ...body }, 'PATCH'),
