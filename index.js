@@ -147,6 +147,10 @@
     getDMs: () => apiCall(`/users/@me/channels`),
     getUser: userId => apiCall(`/users/${userId}`),
 
+    getDirectFriendInviteLinks: () => apiCall(`/users/@me/invites`),
+    createDirectFriendInviteLink: () => apiCall(`/users/@me/invites`, null, 'POST'),
+    deleteDirectFriendInviteLinks: () => apiCall(`/users/@me/invites`, null, 'DELETE'),
+
     getCurrentUser: () => apiCall('/users/@me'),
     editCurrentUser: (username, bio, body = {}) => apiCall('/users/@me', { username: username ?? undefined, bio: bio ?? undefined, ...body }, 'PATCH'),
 
