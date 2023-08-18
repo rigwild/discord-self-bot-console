@@ -90,10 +90,10 @@ cd discord-self-bot-console
 code .
 ```
 
-Doing the following, you should be able to get typings. Open [`myScripts/example.js`](./myScript/example.js).
+Doing the following, you should be able to get typings. Open [`myScripts/example.js`](./myScripts/example.js).
 
 ```js
-// myscripts/example.js
+// myScripts/example.js
 
 // @ts-check
 const { api } = require('../index.js')
