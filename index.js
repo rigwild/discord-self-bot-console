@@ -165,6 +165,16 @@
     typing: channelOrThreadId => apiCall(`/channels/${channelOrThreadId}/typing`, null, 'POST'),
 
     delay,
+    downloadFileByUrl: (url, filename) =>
+      fetch(url)
+        .then(response => response.blob())
+        .then(blob => {
+          const link = document.createElement('a')
+          link.href = URL.createObjectURL(blob)
+          link.download = filename
+          link.click()
+        })
+        .catch(console.error),
     apiCall,
     id,
     update_guildId_and_channelId_withCurrentlyVisible,

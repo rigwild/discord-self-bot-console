@@ -164,6 +164,7 @@ export type api = {
   typing(channelOrThreadId: string): Promise<void>
 
   delay(ms: number): Promise<void>
+  downloadFileByUrl: (url: string, filename: string) => Promise<void>
   apiCall<T>(apiPath: string, body?: any, method?: string, options?: RequestOptions): Promise<T>
   id(log?: boolean): void
   update_guildId_and_channelId_withCurrentlyVisible(log?: boolean): void

@@ -399,6 +399,19 @@ await delay(1500)
 await api.delay(1500)
 ```
 
+## `api.downloadFileByUrl(url, filename)`
+
+`api.downloadFileByUrl(url: string, filename: string) => Promise<void>`
+
+Download a file at `url` and name it `filename`.
+
+See [How to download attachments (file, image) from a message?](https://github.com/rigwild/discord-self-bot-console/discussions/66)
+
+```js
+await api.downloadFileByUrl('https://cataas.com/cat', 'cat.png')
+await api.downloadFileByUrl(messages[0].attachments[0].url, messages[0].attachments[0].filename)
+```
+
 ## `api.id()`
 
 `api.id() => void` (old alias)
