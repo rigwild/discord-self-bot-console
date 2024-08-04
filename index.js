@@ -65,6 +65,10 @@
       .catch(console.error)
   }
 
+  var fetchAllSlashCommands = (guildId) => {
+    
+  }
+
   /** @type {import('./types').api} */
   var api = {
     getMessages: (channelOrThreadId, limit = 100, params = {}) => apiCall(`/channels/${channelOrThreadId}/messages?limit=${limit ?? 100}&${qs(params)}`),
@@ -115,6 +119,7 @@
     deleteEmoji: (guildId, emojiId) => apiCall(`/guilds/${guildId}/${emojiId}`, null, 'DELETE'),
 
     searchSlashCommand: (channelOrThreadId, search) => apiCall(`/channels/${channelOrThreadId}/application-commands/search?type=1&query=${search}&limit=25&include_applications=true`),
+    fetchSlashCommands: ( guildId ) => apiCall(`/guilds/${guildId}/application-command-index`),
     sendSlashCommand: (guildId, channelOrThreadId, command, commandOptions = []) => {
       const formData = new FormData()
       formData.append(
