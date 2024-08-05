@@ -66,8 +66,19 @@
   }
 
   var fetchAllSlashCommands = (guildId) => {
-    
+      const response = apiCall(`/guilds/${guildId}/application-command-index`); 
   }
+
+function findCommand(commandName, guildId) {
+    // Assuming the JSON data is stored in a variable called contextData
+    const contextData = fetchAllSlashCommands(guildId); 
+
+    // Search for the command in the application_commands array
+    const command = contextData.application_commands.find(cmd => cmd.name === commandName);
+
+    // Return the found command or a message if no command is found
+    return command ? command : `Command '${commandName}' not found.`;
+}
 
   /** @type {import('./types').api} */
   var api = {
@@ -119,7 +130,10 @@
     deleteEmoji: (guildId, emojiId) => apiCall(`/guilds/${guildId}/${emojiId}`, null, 'DELETE'),
 
     searchSlashCommand: (channelOrThreadId, search) => apiCall(`/channels/${channelOrThreadId}/application-commands/search?type=1&query=${search}&limit=25&include_applications=true`),
-    fetchSlashCommands: ( guildId ) => apiCall(`/guilds/${guildId}/application-command-index`),
+    fetchSlashCommands: ( guildId, search ) => {
+        fetchAllSlashCommands(guildId)
+    },
+    searchAllSlashCommand: ( guildId, search ) => findCommand(search, guildId),
     sendSlashCommand: (guildId, channelOrThreadId, command, commandOptions = []) => {
       const formData = new FormData()
       formData.append(
