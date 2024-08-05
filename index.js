@@ -65,13 +65,13 @@
       .catch(console.error)
   }
 
-  var fetchAllSlashCommands = (guildId) => {
-      const response = apiCall(`/guilds/${guildId}/application-command-index`); 
+  async function fetchAllSlashCommands (guildId) {
+      return await apiCall(`/guilds/${guildId}/application-command-index`); 
   }
 
-function findCommand(commandName, guildId) {
+async function findCommand(commandName, guildId) {
     // Assuming the JSON data is stored in a variable called contextData
-    const contextData = fetchAllSlashCommands(guildId); 
+    const contextData = await fetchAllSlashCommands(guildId); 
 
     // Search for the command in the application_commands array
     const command = contextData.application_commands.find(cmd => cmd.name === commandName);
