@@ -82,7 +82,7 @@ async function findCommand(commandName, guildId) {
 
   /** @type {import('./types').api} */
   var api = {
-    getMessages: (channelOrThreadId, limit = 100, params = {}) => apiCall(`/channels/${channelOrThreadId}/messages?limit=${limit ?? 100}&${qs(params)}`),
+    getMessages: (channelOrThreadId, limit = 100, params = null) => apiCall(`/channels/${channelOrThreadId}/messages?limit=${limit ?? 100}${params !== null ? `&${qs(params)}`}`),
     sendMessage: (channelOrThreadId, message, tts, body = {}) => apiCall(`/channels/${channelOrThreadId}/messages`, { content: message, tts: !!tts, ...body }, 'POST'),
     replyToMessage: (channelOrThreadId, repliedMessageId, message, tts, body = {}) =>
       apiCall(`/channels/${channelOrThreadId}/messages`, { content: message, message_reference: { message_id: repliedMessageId }, tts: !!tts, ...body }, 'POST'),
