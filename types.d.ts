@@ -92,6 +92,49 @@ export interface Guild {
   // ...
 }
 
+export interface ApplicationCommand {
+  id: string
+  type: number
+  application_id: string
+  version: string
+  name: string
+  description: string
+  options?: {
+    type: number
+    name: string
+    description: string
+    required: boolean
+    autocomplete: boolean
+    choices?: {
+      name: string
+      value: string
+    }[]
+  }[]
+  dm_permission: boolean
+  integration_types: number[]
+  global_popularity_rank?: number
+  guild_id?: string
+  default_member_permissions?: string
+  permissions?: {
+    roles: {
+      [key: string]: boolean
+    }
+  }
+}
+
+export interface GuildCommandsIndex {
+  applications: {
+    id: string
+    name: string
+    description: string
+    icon: string
+    bot_id: string
+    flags: string
+  }[]
+  application_commands: ApplicationCommand[]
+  version: string
+}
+
 export type api = {
   getMessages(channelOrThreadId: string, limit?: number, params?: any): Promise<Message[]>
   sendMessage(channelOrThreadId: string, message: string, tts?: boolean, body?: any): Promise<Message>
@@ -134,7 +177,8 @@ export type api = {
   editEmoji(guildId: string, emojiId: string, name: string, roles: string[]): Promise<Emoji>
   deleteEmoji(guildId: string, emojiId: string): Promise<void>
 
-  searchSlashCommand(channelOrThreadId: string, search: string): Promise<any>
+  getGuildCommandsAndApplications(guildId: string): Promise<GuildCommandsIndex>
+  searchSlashCommands(guildId: string, searchWord: string): Promise<ApplicationCommand[]>
   sendSlashCommand(guildId: string, channelOrThreadId: string, command: any, commandOptions?: any[]): Promise<any>
 
   changeNick(guildId: string, nick: string): Promise<void>

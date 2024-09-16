@@ -63,26 +63,11 @@
     return fetch(`https://discord.com/api/v9${apiPath}`, fetchOptions)
       .then(res => res.json().catch(() => {}))
       .catch(console.error)
-  }
-
-  async function fetchAllSlashCommands (guildId) {
-      return await apiCall(`/guilds/${guildId}/application-command-index`); 
-  }
-
-async function findCommand(commandName, guildId) {
-    // Assuming the JSON data is stored in a variable called contextData
-    const contextData = await fetchAllSlashCommands(guildId); 
-
-    // Search for the command in the application_commands array
-    const command = contextData.application_commands.find(cmd => cmd.name === commandName);
-
-    // Return the found command or a message if no command is found
-    return command ? command : `Command '${commandName}' not found.`;
 }
 
   /** @type {import('./types').api} */
   var api = {
-    getMessages: (channelOrThreadId, limit = 100, params = null) => apiCall(`/channels/${channelOrThreadId}/messages?limit=${limit ?? 100}${params !== null ? `&${qs(params)}` : ""}`),
+    getMessages: (channelOrThreadId, limit = 100, params = {}) => apiCall(`/channels/${channelOrThreadId}/messages?limit=${limit ?? 100}&${qs(params)}`),
     sendMessage: (channelOrThreadId, message, tts, body = {}) => apiCall(`/channels/${channelOrThreadId}/messages`, { content: message, tts: !!tts, ...body }, 'POST'),
     replyToMessage: (channelOrThreadId, repliedMessageId, message, tts, body = {}) =>
       apiCall(`/channels/${channelOrThreadId}/messages`, { content: message, message_reference: { message_id: repliedMessageId }, tts: !!tts, ...body }, 'POST'),
@@ -129,11 +114,15 @@ async function findCommand(commandName, guildId) {
     editEmoji: (guildId, emojiId, name, roles) => apiCall(`/guilds/${guildId}/${emojiId}`, { name, roles }, 'PATCH'),
     deleteEmoji: (guildId, emojiId) => apiCall(`/guilds/${guildId}/${emojiId}`, null, 'DELETE'),
 
-    searchSlashCommand: (channelOrThreadId, search) => apiCall(`/channels/${channelOrThreadId}/application-commands/search?type=1&query=${search}&limit=25&include_applications=true`),
-    fetchSlashCommands: ( guildId, search ) => {
-        fetchAllSlashCommands(guildId)
+    getGuildCommandsAndApplications: guildId => apiCall(`/guilds/${guildId}/application-command-index`),
+    searchSlashCommands: async (guildId, searchWord = '') => {
+      const contextData = await apiCall(`/guilds/${guildId}/application-command-index`)
+      const commands = contextData.application_commands.filter(cmd => cmd.name.includes(searchWord))
+      if (contextData.application_commands?.length > 0 && commands.length === 0) {
+        throw new Error(`Command '${searchWord}' not found.`)
+      }
+      return commands
     },
-    searchAllSlashCommand: ( guildId, search ) => findCommand(search, guildId),
     sendSlashCommand: (guildId, channelOrThreadId, command, commandOptions = []) => {
       const formData = new FormData()
       formData.append(
