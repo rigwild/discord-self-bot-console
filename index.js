@@ -1,6 +1,8 @@
 // @ts-check
 /// <reference path="./types.d.ts" />
 
+// From https://github.com/rigwild/discord-self-bot-console
+
 {
   var gid = '' // Current guild id
   var cid = '' // Current channel id
@@ -62,9 +64,15 @@
       fetchOptions.body = JSON.stringify(body)
     }
     return fetch(`https://discord.com/api/v9${apiPath}`, fetchOptions)
-      .then(res => res.json().catch(() => {}))
-      .catch(console.error)
-}
+      .then(res => {
+        if (res.ok) return res.json()
+        throw new Error(`Failed to fetch: ${res.status} ${res.statusText}`)
+      })
+      .catch(err => {
+        console.error(err)
+        throw new Error('An error occurred while fetching the API.')
+      })
+  }
 
   /** @type {import('./types').api} */
   var api = {
